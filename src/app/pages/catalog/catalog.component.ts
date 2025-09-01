@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Header } from '@marys-fashion-angular/layout';
-import { FooterComponent } from '../../components/footer/footer.component';
+import { Footer, Header } from '@marys-fashion-angular/layout';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { Category, Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
@@ -11,13 +10,7 @@ import { ProductService } from '../../services/product.service';
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    Header,
-    FooterComponent,
-    ProductCardComponent,
-  ],
+  imports: [CommonModule, FormsModule, Header, Footer, ProductCardComponent],
   template: `
     <lib-header></lib-header>
 
@@ -194,7 +187,7 @@ import { ProductService } from '../../services/product.service';
       </div>
     </div>
 
-    <app-footer></app-footer>
+    <lib-footer></lib-footer>
   `,
   styles: [],
 })
