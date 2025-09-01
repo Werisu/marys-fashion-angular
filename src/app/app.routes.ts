@@ -3,8 +3,13 @@ import { Route } from '@angular/router';
 export const appRoutes: Route[] = [
   {
     path: '',
+    pathMatch: 'full',
+    redirectTo: 'home',
+  },
+  {
+    path: 'home',
     loadComponent: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent),
+      import('@marys-fashion-angular/home').then((m) => m.Home),
   },
   {
     path: 'catalogo',
@@ -16,8 +21,8 @@ export const appRoutes: Route[] = [
   {
     path: 'produto/:id',
     loadComponent: () =>
-      import('./pages/product-detail/product-detail.component').then(
-        (m) => m.ProductDetailComponent
+      import('@marys-fashion-angular/product-detail').then(
+        (m) => m.ProductDetail
       ),
   },
   {

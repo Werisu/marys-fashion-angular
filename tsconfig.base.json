@@ -8,13 +8,18 @@
     "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "paths": {
+      "@marys-fashion-angular/home": ["modules/feature/home/src/index.ts"],
       "@marys-fashion-angular/layout": ["modules/feature/layout/src/index.ts"],
       "@marys-fashion-angular/product-data-access": [
         "modules/data-access/product/src/index.ts"
       ],
+      "@marys-fashion-angular/product-detail": [
+        "modules/feature/product/detail/src/index.ts"
+      ],
       "@marys-fashion-angular/product-search": [
         "modules/feature/product/search/src/index.ts"
       ],
+      "@marys-fashion-angular/product-ui": ["modules/ui/product/src/index.ts"],
       "@marys-fashion-angular/supabase": [
         "modules/data-access/supabase/src/index.ts"
       ],
