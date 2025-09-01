@@ -1,17 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FooterComponent } from '../../components/footer/footer.component';
-import { HeaderComponent } from '../../components/header/header.component';
+import { Footer, Header } from '@marys-fashion-angular/layout';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, Header, Footer],
   template: `
-    <app-header></app-header>
+    <lib-header></lib-header>
 
     <div *ngIf="product; else loading" class="bg-gray-50 min-h-screen py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -240,7 +239,7 @@ import { ProductService } from '../../services/product.service';
       </div>
     </ng-template>
 
-    <app-footer></app-footer>
+    <lib-footer></lib-footer>
   `,
   styles: [],
 })
@@ -307,7 +306,7 @@ export class ProductDetailComponent implements OnInit {
     const message = `Olá! Gostaria de fazer um pedido do produto: ${
       this.product.name
     } - R$ ${this.product.price.toFixed(2).replace('.', ',')}`;
-    return `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/5563992345422?text=${encodeURIComponent(message)}`;
   }
 
   viewProduct(productId: number) {

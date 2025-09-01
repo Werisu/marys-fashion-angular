@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FooterComponent } from '../../components/footer/footer.component';
-import { HeaderComponent } from '../../components/header/header.component';
+import { Footer, Header } from '@marys-fashion-angular/layout';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { Category, Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
@@ -10,14 +9,9 @@ import { ProductService } from '../../services/product.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    CommonModule,
-    HeaderComponent,
-    FooterComponent,
-    ProductCardComponent,
-  ],
+  imports: [CommonModule, Header, Footer, ProductCardComponent],
   template: `
-    <app-header></app-header>
+    <lib-header></lib-header>
 
     <!-- Hero Section -->
     <section
@@ -38,7 +32,7 @@ import { ProductService } from '../../services/product.service';
               Ver Catálogo
             </button>
             <a
-              href="https://wa.me/5511999999999?text=Olá! Gostaria de conhecer mais sobre os produtos."
+              href="https://wa.me/5563992345422?text=Olá! Gostaria de conhecer mais sobre os produtos."
               target="_blank"
               class="inline-block bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold text-lg transition-colors"
             >
@@ -203,7 +197,7 @@ import { ProductService } from '../../services/product.service';
                 personalizado
               </p>
               <a
-                href="https://wa.me/5511999999999?text=Olá! Gostaria de fazer um pedido."
+                href="https://wa.me/5563992345422?text=Olá! Gostaria de fazer um pedido."
                 target="_blank"
                 class="inline-block bg-white text-pink-600 hover:bg-pink-50 px-6 py-3 rounded-lg font-semibold transition-colors"
               >
@@ -215,7 +209,7 @@ import { ProductService } from '../../services/product.service';
       </div>
     </section>
 
-    <app-footer></app-footer>
+    <lib-footer></lib-footer>
   `,
   styles: [],
 })
