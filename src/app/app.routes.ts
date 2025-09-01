@@ -21,8 +21,8 @@ export const appRoutes: Route[] = [
   {
     path: 'produto/:id',
     loadComponent: () =>
-      import('./pages/product-detail/product-detail.component').then(
-        (m) => m.ProductDetailComponent
+      import('@marys-fashion-angular/product-detail').then(
+        (m) => m.ProductDetail
       ),
   },
   {
