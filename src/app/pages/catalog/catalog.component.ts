@@ -9,8 +9,8 @@ import {
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
 import { ProductSearchComponent } from '@marys-fashion-angular/product-search';
+import { ProductCard } from '@marys-fashion-angular/product-ui';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
-import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
 @Component({
   selector: 'app-catalog',
@@ -20,7 +20,7 @@ import { ProductCardComponent } from '../../components/product-card/product-card
     FormsModule,
     Header,
     Footer,
-    ProductCardComponent,
+    ProductCard,
     ProductSearchComponent,
   ],
   template: `
@@ -131,10 +131,10 @@ import { ProductCardComponent } from '../../components/product-card/product-card
         <div
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
-          <app-product-card
+          <lib-product-card
             *ngFor="let product of filteredProducts"
             [product]="product"
-          ></app-product-card>
+          ></lib-product-card>
         </div>
 
         <!-- Load More -->

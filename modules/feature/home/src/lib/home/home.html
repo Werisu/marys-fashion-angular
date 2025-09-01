@@ -78,10 +78,9 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <app-product-card
-        *ngFor="let product of featuredProducts"
-        [product]="product"
-      ></app-product-card>
+      @for(product of featuredProducts; track product.id){
+      <lib-product-card [product]="product"></lib-product-card>
+      }
     </div>
 
     <div class="text-center mt-12">

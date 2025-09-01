@@ -6,12 +6,12 @@ import {
   Product,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
+import { ProductCard } from '@marys-fashion-angular/product-ui';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
-import { ProductCardComponent } from './../../../../../../src/app/components/product-card/product-card.component';
 
 @Component({
   selector: 'lib-home',
-  imports: [Header, Footer, ProductCardComponent],
+  imports: [Header, Footer, ProductCard],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
