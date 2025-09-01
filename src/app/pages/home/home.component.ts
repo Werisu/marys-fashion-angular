@@ -7,18 +7,15 @@ import {
   Product,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
-import { ProductSearch } from '@marys-fashion-angular/product-search';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, Header, Footer, ProductCardComponent, ProductSearch],
+  imports: [CommonModule, Header, Footer, ProductCardComponent],
   template: `
-    <lib-header>
-      <lib-product-search></lib-product-search>
-    </lib-header>
+    <lib-header></lib-header>
 
     <!-- Hero Section -->
     <section

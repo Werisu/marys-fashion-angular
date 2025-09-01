@@ -1,0 +1,52 @@
+// Estilos personalizados para o componente de busca
+// Estes estilos complementam o Tailwind CSS
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Animações personalizadas
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-results {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+// Estilos para dispositivos móveis
+@media (max-width: 640px) {
+  .search-container {
+    padding: 0 1rem;
+  }
+
+  .search-input {
+    font-size: 16px; // Evita zoom no iOS
+  }
+}
+
+// Estilos para foco personalizado
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+// Hover states personalizados
+.search-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+// Transições suaves
+.search-input,
+.search-button,
+.clear-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}

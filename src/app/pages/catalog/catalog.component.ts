@@ -8,13 +8,21 @@ import {
   Product,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
+import { ProductSearch } from '@marys-fashion-angular/product-search';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, FormsModule, Header, Footer, ProductCardComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    Header,
+    Footer,
+    ProductCardComponent,
+    ProductSearch,
+  ],
   template: `
     <lib-header></lib-header>
 
@@ -30,26 +38,16 @@ import { ProductCardComponent } from '../../components/product-card/product-card
           </p>
         </div>
 
+        <!-- Componente de Busca -->
+        <div class="mb-8">
+          <lib-product-search
+            (searchEvent)="onSearchEvent($event)"
+          ></lib-product-search>
+        </div>
+
         <!-- Filters -->
         <div class="bg-white rounded-lg shadow p-6 mb-8">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Search -->
-            <div>
-              <label
-                for="search"
-                class="block text-sm font-medium text-gray-700 mb-2"
-                >Buscar Produtos</label
-              >
-              <input
-                id="search"
-                type="text"
-                [(ngModel)]="searchQuery"
-                (input)="onSearch()"
-                placeholder="Digite o nome do produto..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-              />
-            </div>
-
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Category Filter -->
             <div>
               <label
@@ -226,7 +224,8 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  onSearch() {
+  onSearchEvent(searchTerm: string): void {
+    this.searchQuery = searchTerm;
     this.currentPage = 1;
     this.applyFilters();
   }
@@ -294,7 +293,7 @@ export class CatalogComponent implements OnInit {
 
   clearSearch() {
     this.searchQuery = '';
-    this.onSearch();
+    this.onSearchEvent('');
   }
 
   clearCategory() {
