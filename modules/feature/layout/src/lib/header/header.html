@@ -6,6 +6,8 @@
         <div class="text-2xl font-bold text-pink-600">Mary's Fashion</div>
       </div>
 
+      <ng-content></ng-content>
+
       <!-- Navigation -->
       <nav class="hidden md:flex space-x-8">
         <a
@@ -62,6 +64,8 @@
           </svg>
         </button>
       </div>
+
+      <ng-content select="[right]"></ng-content>
     </div>
 
     <!-- Mobile menu -->

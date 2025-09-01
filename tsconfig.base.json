@@ -12,6 +12,9 @@
       "@marys-fashion-angular/product-data-access": [
         "modules/data-access/product/src/index.ts"
       ],
+      "@marys-fashion-angular/product-search": [
+        "modules/feature/product/search/src/index.ts"
+      ],
       "@marys-fashion-angular/supabase": [
         "modules/data-access/supabase/src/index.ts"
       ],
