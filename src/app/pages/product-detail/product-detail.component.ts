@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
-import { Product } from '../../models/product.model';
-import { ProductService } from '../../services/product.service';
+import {
+  Product,
+  ProductSupabaseService,
+} from '@marys-fashion-angular/product-data-access';
+import { SupabaseService } from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'app-product-detail',
@@ -81,7 +84,7 @@ import { ProductService } from '../../services/product.service';
                   Destaque
                 </span>
                 <span
-                  *ngIf="!product.inStock"
+                  *ngIf="!product.in_stock"
                   class="bg-red-500 text-white text-sm px-3 py-1 rounded-full"
                 >
                   Esgotado
@@ -134,11 +137,11 @@ import { ProductService } from '../../services/product.service';
               <div class="flex items-center space-x-2">
                 <div
                   class="w-3 h-3 rounded-full"
-                  [class.bg-green-500]="product.inStock"
-                  [class.bg-red-500]="!product.inStock"
+                  [class.bg-green-500]="product.in_stock"
+                  [class.bg-red-500]="!product.in_stock"
                 ></div>
                 <span class="text-gray-700">
-                  {{ product.inStock ? 'Em estoque' : 'Esgotado' }}
+                  {{ product.in_stock ? 'Em estoque' : 'Esgotado' }}
                 </span>
               </div>
             </div>
@@ -187,7 +190,7 @@ import { ProductService } from '../../services/product.service';
                 <div class="flex justify-between">
                   <span>Disponibilidade:</span>
                   <span class="font-medium">{{
-                    product.inStock ? 'Imediata' : 'Sob consulta'
+                    product.in_stock ? 'Imediata' : 'Sob consulta'
                   }}</span>
                 </div>
               </div>
@@ -248,13 +251,15 @@ export class ProductDetailComponent implements OnInit {
   relatedProducts: Product[] = [];
   selectedImageIndex = 0;
 
-  constructor(
-    private productService: ProductService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  private productService = inject(ProductSupabaseService);
+  private supabaseService = inject(SupabaseService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit() {
+    // Configurar o serviço antes de usar
+    this.productService.setSupabaseService(this.supabaseService);
+
     this.route.params.subscribe((params) => {
       const productId = +params['id'];
       this.loadProduct(productId);

@@ -21,6 +21,16 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'login',
+    loadComponent: () =>
+      import('./components/auth/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./pages/admin/admin.component').then((m) => m.AdminComponent),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

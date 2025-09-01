@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
+import {
+  Category,
+  Product,
+  ProductSupabaseService,
+} from '@marys-fashion-angular/product-data-access';
+import { SupabaseService } from '@marys-fashion-angular/supabase';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { Category, Product } from '../../models/product.model';
-import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-catalog',
@@ -14,27 +18,30 @@ import { ProductService } from '../../services/product.service';
   template: `
     <lib-header></lib-header>
 
-    <div class="bg-gray-50 min-h-screen">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Page Header -->
-        <div class="text-center mb-8">
+    <div class="bg-gray-50 min-h-screen py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
           <h1 class="text-4xl font-bold text-gray-900 mb-4">
             Catálogo de Produtos
           </h1>
           <p class="text-lg text-gray-600">
-            Descubra nossa coleção completa de roupas femininas
+            Descubra nossa coleção exclusiva de roupas femininas
           </p>
         </div>
 
-        <!-- Search and Filters -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Search -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
+              <label
+                for="search"
+                class="block text-sm font-medium text-gray-700 mb-2"
                 >Buscar Produtos</label
               >
               <input
+                id="search"
                 type="text"
                 [(ngModel)]="searchQuery"
                 (input)="onSearch()"
@@ -45,10 +52,13 @@ import { ProductService } from '../../services/product.service';
 
             <!-- Category Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
+              <label
+                for="category"
+                class="block text-sm font-medium text-gray-700 mb-2"
                 >Categoria</label
               >
               <select
+                id="category"
                 [(ngModel)]="selectedCategory"
                 (change)="onCategoryChange()"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
@@ -56,7 +66,7 @@ import { ProductService } from '../../services/product.service';
                 <option value="">Todas as Categorias</option>
                 <option
                   *ngFor="let category of categories"
-                  [value]="category.id"
+                  [value]="category.name"
                 >
                   {{ category.name }}
                 </option>
@@ -65,69 +75,62 @@ import { ProductService } from '../../services/product.service';
 
             <!-- Sort -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
+              <label
+                for="sort"
+                class="block text-sm font-medium text-gray-700 mb-2"
                 >Ordenar por</label
               >
               <select
+                id="sort"
                 [(ngModel)]="sortBy"
                 (change)="onSortChange()"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               >
-                <option value="name">Nome A-Z</option>
-                <option value="price-asc">Menor Preço</option>
-                <option value="price-desc">Maior Preço</option>
-                <option value="featured">Destaques</option>
+                <option value="name">Nome</option>
+                <option value="price">Preço</option>
+                <option value="created_at">Mais Recentes</option>
               </select>
             </div>
           </div>
 
-          <!-- Active Filters -->
-          <div
-            *ngIf="selectedCategory || searchQuery"
-            class="mt-4 pt-4 border-t border-gray-200"
-          >
-            <div class="flex flex-wrap gap-2">
-              <span *ngIf="selectedCategory" class="text-sm text-gray-600">
-                Categoria:
-                <strong>{{ getCategoryName(selectedCategory) }}</strong>
-                <button
-                  (click)="clearCategory()"
-                  class="ml-2 text-pink-600 hover:text-pink-800"
-                >
-                  ✕
-                </button>
-              </span>
-              <span *ngIf="searchQuery" class="text-sm text-gray-600">
-                Busca: <strong>"{{ searchQuery }}"</strong>
-                <button
-                  (click)="clearSearch()"
-                  class="ml-2 text-pink-600 hover:text-pink-800"
-                >
-                  ✕
-                </button>
-              </span>
-            </div>
+          <!-- Clear Filters -->
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button
+              *ngIf="searchQuery"
+              (click)="clearSearch()"
+              class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-sm"
+            >
+              Limpar busca
+            </button>
+            <button
+              *ngIf="selectedCategory"
+              (click)="clearCategory()"
+              class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-full text-sm"
+            >
+              Limpar categoria
+            </button>
+            <button
+              *ngIf="searchQuery || selectedCategory"
+              (click)="clearAllFilters()"
+              class="px-3 py-1 bg-pink-200 hover:bg-pink-300 text-pink-700 rounded-full text-sm"
+            >
+              Limpar todos os filtros
+            </button>
           </div>
         </div>
 
-        <!-- Results Info -->
-        <div class="flex justify-between items-center mb-6">
+        <!-- Results Count -->
+        <div class="mb-6">
           <p class="text-gray-600">
-            Mostrando {{ filteredProducts.length }} de
-            {{ totalProducts }} produtos
+            {{ totalProducts }} produto{{
+              totalProducts !== 1 ? 's' : ''
+            }}
+            encontrado{{ totalProducts !== 1 ? 's' : '' }}
           </p>
-          <button
-            *ngIf="selectedCategory || searchQuery"
-            (click)="clearAllFilters()"
-            class="text-pink-600 hover:text-pink-800 font-medium"
-          >
-            Limpar Filtros
-          </button>
         </div>
 
         <!-- Products Grid -->
         <div
-          *ngIf="filteredProducts.length > 0; else noProducts"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
           <app-product-card
@@ -136,53 +139,45 @@ import { ProductService } from '../../services/product.service';
           ></app-product-card>
         </div>
 
-        <!-- No Products Message -->
-        <ng-template #noProducts>
-          <div class="text-center py-12">
-            <div class="text-gray-400 mb-4">
-              <svg
-                class="mx-auto h-12 w-12"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-                ></path>
-              </svg>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">
-              Nenhum produto encontrado
-            </h3>
-            <p class="text-gray-600 mb-6">
-              Tente ajustar os filtros ou fazer uma nova busca
-            </p>
-            <button
-              (click)="clearAllFilters()"
-              class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-            >
-              Limpar Filtros
-            </button>
-          </div>
-        </ng-template>
-
-        <!-- Load More Button -->
+        <!-- Load More -->
         <div
-          *ngIf="
-            filteredProducts.length > 0 &&
-            filteredProducts.length < totalProducts
-          "
+          *ngIf="filteredProducts.length < totalProducts"
           class="text-center mt-12"
         >
           <button
             (click)="loadMore()"
-            class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+            class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-lg font-semibold text-lg transition-colors"
           >
             Carregar Mais Produtos
           </button>
+        </div>
+
+        <!-- No Results -->
+        <div
+          *ngIf="filteredProducts.length === 0 && totalProducts > 0"
+          class="text-center py-12"
+        >
+          <div class="text-gray-500">
+            <svg
+              class="mx-auto h-12 w-12 text-gray-400 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">
+              Nenhum produto encontrado
+            </h3>
+            <p class="text-gray-600">
+              Tente ajustar os filtros ou fazer uma nova busca.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -204,29 +199,23 @@ export class CatalogComponent implements OnInit {
   itemsPerPage = 12;
   currentPage = 1;
 
-  constructor(
-    private productService: ProductService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  private productService = inject(ProductSupabaseService);
+  private supabaseService = inject(SupabaseService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit() {
+    // Configurar o serviço antes de usar
+    this.productService.setSupabaseService(this.supabaseService);
+
     this.loadProducts();
     this.loadCategories();
-
-    // Check for category filter in URL
-    this.route.queryParams.subscribe((params) => {
-      if (params['categoria']) {
-        this.selectedCategory = params['categoria'];
-        this.applyFilters();
-      }
-    });
+    this.checkQueryParams();
   }
 
   loadProducts() {
     this.productService.getProducts().subscribe((products) => {
       this.products = products;
-      this.totalProducts = products.length;
       this.applyFilters();
     });
   }
@@ -254,30 +243,28 @@ export class CatalogComponent implements OnInit {
   applyFilters() {
     let filtered = [...this.products];
 
-    // Apply search filter
+    // Search filter
     if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
       filtered = filtered.filter(
         (product) =>
-          product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          product.description
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase()) ||
-          product.category
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase())
+          product.name.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query) ||
+          product.category.toLowerCase().includes(query)
       );
     }
 
-    // Apply category filter
+    // Category filter
     if (this.selectedCategory) {
       filtered = filtered.filter(
         (product) => product.category === this.selectedCategory
       );
     }
 
-    // Apply sorting
+    // Sort
     filtered = this.sortProducts(filtered);
 
+    this.totalProducts = filtered.length;
     this.filteredProducts = filtered.slice(
       0,
       this.currentPage * this.itemsPerPage
@@ -288,32 +275,31 @@ export class CatalogComponent implements OnInit {
     switch (this.sortBy) {
       case 'name':
         return products.sort((a, b) => a.name.localeCompare(b.name));
-      case 'price-asc':
+      case 'price':
         return products.sort((a, b) => a.price - b.price);
-      case 'price-desc':
-        return products.sort((a, b) => b.price - a.price);
-      case 'featured':
-        return products.sort(
-          (a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
-        );
+      case 'created_at':
+        return products.sort((a, b) => {
+          const dateA = new Date(a.created_at || 0);
+          const dateB = new Date(b.created_at || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
       default:
         return products;
     }
   }
 
-  getCategoryName(categoryId: string): string {
-    const category = this.categories.find((c) => c.id === categoryId);
-    return category ? category.name : categoryId;
+  getCategoryName(categoryName: string): string {
+    return categoryName;
   }
 
   clearSearch() {
     this.searchQuery = '';
-    this.applyFilters();
+    this.onSearch();
   }
 
   clearCategory() {
     this.selectedCategory = '';
-    this.applyFilters();
+    this.onCategoryChange();
   }
 
   clearAllFilters() {
@@ -327,5 +313,14 @@ export class CatalogComponent implements OnInit {
   loadMore() {
     this.currentPage++;
     this.applyFilters();
+  }
+
+  private checkQueryParams() {
+    this.route.queryParams.subscribe((params) => {
+      if (params['categoria']) {
+        this.selectedCategory = params['categoria'];
+        this.onCategoryChange();
+      }
+    });
   }
 }

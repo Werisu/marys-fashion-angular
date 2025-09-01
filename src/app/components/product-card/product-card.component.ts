@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Product } from '../../models/product.model';
+import { Product } from '../../../../modules/data-access/product/src/lib/models/product.model';
 
 @Component({
   selector: 'app-product-card',
@@ -26,7 +26,7 @@ import { Product } from '../../models/product.model';
             Destaque
           </span>
         </div>
-        <div *ngIf="!product.inStock" class="absolute top-2 right-2">
+        <div *ngIf="!product.in_stock" class="absolute top-2 right-2">
           <span
             class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium"
           >
