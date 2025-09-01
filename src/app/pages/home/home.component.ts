@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
 import {
   Category,
   Product,
-} from '../../../../modules/data-access/product/src/lib/models/product.model';
+  ProductSupabaseService,
+  SupabaseService,
+} from '@marys-fashion-angular/product-data-access';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { ProductSupabaseService } from '../../services/product-supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -220,12 +221,14 @@ export class HomeComponent implements OnInit {
   categories: Category[] = [];
   featuredProducts: Product[] = [];
 
-  constructor(
-    private productService: ProductSupabaseService,
-    private router: Router
-  ) {}
+  private productService = inject(ProductSupabaseService);
+  private supabaseService = inject(SupabaseService);
+  private router = inject(Router);
 
   ngOnInit() {
+    // Configurar o serviço antes de usar
+    this.productService.setSupabaseService(this.supabaseService);
+
     this.loadCategories();
     this.loadFeaturedProducts();
   }
@@ -246,7 +249,7 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/catalogo']);
   }
 
-  goToCategory(categoryId: number) {
+  goToCategory(categoryId: string | number) {
     this.router.navigate(['/catalogo'], {
       queryParams: { categoria: categoryId },
     });

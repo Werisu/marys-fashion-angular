@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
-import { Product } from '../../../../modules/data-access/product/src/lib/models/product.model';
-import { ProductSupabaseService } from '../../services/product-supabase.service';
+import {
+  Product,
+  ProductSupabaseService,
+  SupabaseService,
+} from '@marys-fashion-angular/product-data-access';
 
 @Component({
   selector: 'app-product-detail',
@@ -248,13 +251,15 @@ export class ProductDetailComponent implements OnInit {
   relatedProducts: Product[] = [];
   selectedImageIndex = 0;
 
-  constructor(
-    private productService: ProductSupabaseService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  private productService = inject(ProductSupabaseService);
+  private supabaseService = inject(SupabaseService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit() {
+    // Configurar o serviço antes de usar
+    this.productService.setSupabaseService(this.supabaseService);
+
     this.route.params.subscribe((params) => {
       const productId = +params['id'];
       this.loadProduct(productId);

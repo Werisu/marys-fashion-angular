@@ -1,28 +1,65 @@
 import { Injectable } from '@angular/core';
-import { Category, Product } from '@marys-fashion-angular/product-data-access';
 import { Observable, catchError, from, map, of } from 'rxjs';
-import { SupabaseService } from './supabase.service';
+import { Category, Product } from '../models/product.model';
 
+// Interface para o cliente Supabase
+interface SupabaseClient {
+  from(table: string): any;
+}
+
+// Interface para o serviço Supabase
+interface SupabaseService {
+  getClient(): SupabaseClient;
+  isAuthenticated(): boolean;
+}
+
+/**
+ * Serviço de data access para gerenciar produtos via Supabase
+ *
+ * Este serviço deve ser configurado com uma instância do SupabaseService
+ * antes de ser usado.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class ProductSupabaseService {
-  constructor(private supabaseService: SupabaseService) {}
+  private supabaseService?: SupabaseService;
+
+  /**
+   * Configurar o serviço Supabase
+   */
+  setSupabaseService(service: SupabaseService) {
+    this.supabaseService = service;
+  }
+
+  /**
+   * Verificar se o serviço está configurado
+   */
+  private checkService(): boolean {
+    if (!this.supabaseService) {
+      console.error(
+        'SupabaseService não configurado. Use setSupabaseService() primeiro.'
+      );
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Obter todos os produtos
    */
   getProducts(): Observable<Product[]> {
+    if (!this.checkService()) return of([]);
+
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .select('*')
         .order('created_at', { ascending: false })
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data || [];
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data || [];
       }),
       catchError((error) => {
         console.error('Erro ao buscar produtos:', error);
@@ -35,17 +72,18 @@ export class ProductSupabaseService {
    * Obter produto por ID
    */
   getProductById(id: number): Observable<Product | undefined> {
+    if (!this.checkService()) return of(undefined);
+
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .select('*')
         .eq('id', id)
         .single()
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data || undefined;
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data || undefined;
       }),
       catchError((error) => {
         console.error('Erro ao buscar produto:', error);
@@ -58,17 +96,18 @@ export class ProductSupabaseService {
    * Obter produtos por categoria
    */
   getProductsByCategory(category: string): Observable<Product[]> {
+    if (!this.checkService()) return of([]);
+
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .select('*')
         .eq('category', category)
         .order('created_at', { ascending: false })
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data || [];
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data || [];
       }),
       catchError((error) => {
         console.error('Erro ao buscar produtos por categoria:', error);
@@ -81,17 +120,18 @@ export class ProductSupabaseService {
    * Obter produtos em destaque
    */
   getFeaturedProducts(): Observable<Product[]> {
+    if (!this.checkService()) return of([]);
+
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .select('*')
         .eq('featured', true)
         .order('created_at', { ascending: false })
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data || [];
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data || [];
       }),
       catchError((error) => {
         console.error('Erro ao buscar produtos em destaque:', error);
@@ -104,16 +144,17 @@ export class ProductSupabaseService {
    * Obter todas as categorias
    */
   getCategories(): Observable<Category[]> {
+    if (!this.checkService()) return of([]);
+
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('categories')
         .select('*')
         .order('name', { ascending: true })
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data || [];
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data || [];
       }),
       catchError((error) => {
         console.error('Erro ao buscar categorias:', error);
@@ -126,9 +167,10 @@ export class ProductSupabaseService {
    * Buscar produtos
    */
   searchProducts(query: string): Observable<Product[]> {
+    if (!this.checkService()) return of([]);
+
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .select('*')
         .or(
@@ -136,9 +178,9 @@ export class ProductSupabaseService {
         )
         .order('created_at', { ascending: false })
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data || [];
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data || [];
       }),
       catchError((error) => {
         console.error('Erro ao buscar produtos:', error);
@@ -151,22 +193,22 @@ export class ProductSupabaseService {
    * Criar novo produto (apenas para usuários autenticados)
    */
   createProduct(product: Omit<Product, 'id'>): Observable<Product | null> {
-    if (!this.supabaseService.isAuthenticated()) {
+    if (!this.checkService()) return of(null);
+    if (!this.supabaseService!.isAuthenticated()) {
       console.error('Usuário não autenticado');
       return of(null);
     }
 
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .insert([product])
         .select()
         .single()
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data;
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data;
       }),
       catchError((error) => {
         console.error('Erro ao criar produto:', error);
@@ -182,23 +224,23 @@ export class ProductSupabaseService {
     id: number,
     updates: Partial<Product>
   ): Observable<Product | null> {
-    if (!this.supabaseService.isAuthenticated()) {
+    if (!this.checkService()) return of(null);
+    if (!this.supabaseService!.isAuthenticated()) {
       console.error('Usuário não autenticado');
       return of(null);
     }
 
     return from(
-      this.supabaseService
-        .getClient()
+      this.supabaseService!.getClient()
         .from('products')
         .update(updates)
         .eq('id', id)
         .select()
         .single()
     ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return data;
+      map((response: any) => {
+        if (response.error) throw response.error;
+        return response.data;
       }),
       catchError((error) => {
         console.error('Erro ao atualizar produto:', error);
@@ -211,16 +253,17 @@ export class ProductSupabaseService {
    * Deletar produto (apenas para usuários autenticados)
    */
   deleteProduct(id: number): Observable<boolean> {
-    if (!this.supabaseService.isAuthenticated()) {
+    if (!this.checkService()) return of(false);
+    if (!this.supabaseService!.isAuthenticated()) {
       console.error('Usuário não autenticado');
       return of(false);
     }
 
     return from(
-      this.supabaseService.getClient().from('products').delete().eq('id', id)
+      this.supabaseService!.getClient().from('products').delete().eq('id', id)
     ).pipe(
-      map(({ error }) => {
-        if (error) throw error;
+      map((response: any) => {
+        if (response.error) throw response.error;
         return true;
       }),
       catchError((error) => {
@@ -232,36 +275,10 @@ export class ProductSupabaseService {
 
   /**
    * Upload de imagem para storage
+   * TODO: Implementar quando storage estiver configurado
    */
   uploadImage(file: File, path: string): Observable<string | null> {
-    if (!this.supabaseService.isAuthenticated()) {
-      console.error('Usuário não autenticado');
-      return of(null);
-    }
-
-    return from(
-      this.supabaseService
-        .getClient()
-        .storage.from('product-images')
-        .upload(path, file)
-    ).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-
-        // Retornar URL pública da imagem
-        const {
-          data: { publicUrl },
-        } = this.supabaseService
-          .getClient()
-          .storage.from('product-images')
-          .getPublicUrl(path);
-
-        return publicUrl;
-      }),
-      catchError((error) => {
-        console.error('Erro ao fazer upload da imagem:', error);
-        return of(null);
-      })
-    );
+    console.warn('Upload de imagem não implementado ainda');
+    return of(null);
   }
 }

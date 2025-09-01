@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Product } from '@marys-fashion-angular/product-data-access';
-import { ProductSupabaseService } from '../../services/product-supabase.service';
-import { SupabaseService } from '../../services/supabase.service';
+import {
+  Product,
+  ProductSupabaseService,
+  SupabaseService,
+} from '@marys-fashion-angular/product-data-access';
 
 @Component({
   selector: 'app-admin',
@@ -318,13 +320,14 @@ export class AdminComponent implements OnInit {
     featured: false,
   };
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private productService: ProductSupabaseService,
-    private router: Router
-  ) {}
+  private supabaseService = inject(SupabaseService);
+  private productService = inject(ProductSupabaseService);
+  private router = inject(Router);
 
   ngOnInit() {
+    // Configurar o serviço antes de usar
+    this.productService.setSupabaseService(this.supabaseService);
+
     this.checkAuth();
     this.loadProducts();
   }

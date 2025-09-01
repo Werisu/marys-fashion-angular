@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService } from '../../services/supabase.service';
+import { SupabaseService } from '@marys-fashion-angular/product-data-access';
 
 @Component({
   selector: 'app-login',

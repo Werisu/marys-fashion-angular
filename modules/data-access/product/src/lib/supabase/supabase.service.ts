@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 // Interface para o ambiente
 interface SupabaseConfig {
@@ -9,6 +8,20 @@ interface SupabaseConfig {
   anonKey: string;
 }
 
+// Configuração temporária - deve ser configurada externamente
+const DEFAULT_CONFIG: SupabaseConfig = {
+  url: 'https://sua-url-do-supabase.supabase.co',
+  anonKey: 'sua-chave-anonima',
+};
+
+/**
+ * Serviço de infraestrutura para gerenciar conexão com Supabase
+ *
+ * Este serviço está na camada DATA ACCESS e gerencia:
+ * - Conexão com o banco de dados
+ * - Autenticação de usuários
+ * - Cliente Supabase para operações de dados
+ */
 @Injectable({
   providedIn: 'root',
 })
@@ -19,8 +32,8 @@ export class SupabaseService {
   constructor() {
     // Configuração do Supabase
     const config: SupabaseConfig = {
-      url: environment.supabase.url,
-      anonKey: environment.supabase.anonKey,
+      url: DEFAULT_CONFIG.url,
+      anonKey: DEFAULT_CONFIG.anonKey,
     };
 
     // Criar cliente Supabase
