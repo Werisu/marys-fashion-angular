@@ -4,7 +4,7 @@ export const appRoutes: Route[] = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent),
+      import('@marys-fashion-angular/home').then((m) => m.Home),
   },
   {
     path: 'catalogo',
