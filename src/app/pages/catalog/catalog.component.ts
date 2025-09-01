@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Header } from '@marys-fashion-angular/layout';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { HeaderComponent } from '../../components/header/header.component';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { Category, Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
@@ -14,12 +14,12 @@ import { ProductService } from '../../services/product.service';
   imports: [
     CommonModule,
     FormsModule,
-    HeaderComponent,
+    Header,
     FooterComponent,
     ProductCardComponent,
   ],
   template: `
-    <app-header></app-header>
+    <lib-header></lib-header>
 
     <div class="bg-gray-50 min-h-screen">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Header } from '@marys-fashion-angular/layout';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { HeaderComponent } from '../../components/header/header.component';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, Header, FooterComponent],
   template: `
-    <app-header></app-header>
+    <lib-header></lib-header>
 
     <div *ngIf="product; else loading" class="bg-gray-50 min-h-screen py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
