@@ -1,0 +1,110 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-footer',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <footer class="bg-gray-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Brand Info -->
+          <div class="space-y-4">
+            <h3 class="text-2xl font-bold text-pink-400">Mary's Fashion</h3>
+            <p class="text-gray-300">
+              Sua loja de roupas femininas com estilo, qualidade e conforto.
+              Descubra looks incríveis para todas as ocasiões.
+            </p>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-pink-400">Links Rápidos</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  routerLink="/"
+                  class="text-gray-300 hover:text-pink-400 transition-colors"
+                >
+                  Início
+                </a>
+              </li>
+              <li>
+                <a
+                  routerLink="/catalogo"
+                  class="text-gray-300 hover:text-pink-400 transition-colors"
+                >
+                  Catálogo
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/5511999999999"
+                  target="_blank"
+                  class="text-gray-300 hover:text-pink-400 transition-colors"
+                >
+                  Fazer Pedido
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="space-y-4">
+            <h4 class="text-lg font-semibold text-pink-400">Contato</h4>
+            <div class="space-y-2">
+              <div class="flex items-center space-x-2">
+                <svg
+                  class="w-5 h-5 text-pink-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M2.003 2.833C2.003 1.82 2.833 1 3.847 1h12.306c1.014 0 1.844.82 1.844 1.833v17.334c0 1.013-.83 1.833-1.844 1.833H3.847c-1.014 0-1.844-.82-1.844-1.833V2.833zM14.5 15.5c0 .276-.224.5-.5.5h-1.5c-.276 0-.5-.224-.5-.5v-1.5c0-.276.224-.5.5-.5h1.5c.276 0 .5.224.5.5v1.5zm-3 0c0 .276-.224.5-.5.5h-1.5c-.276 0-.5-.224-.5-.5v-1.5c0-.276.224-.5.5-.5h1.5c.276 0 .5.224.5.5v1.5zm-3 0c0 .276-.224.5-.5.5h-1.5c-.276 0-.5-.224-.5-.5v-1.5c0-.276.224-.5.5-.5h1.5c.276 0 .5.224.5.5v1.5z"
+                  />
+                </svg>
+                <span class="text-gray-300">WhatsApp: (11) 99999-9999</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <svg
+                  class="w-5 h-5 text-pink-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="text-gray-300">São Paulo, SP</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <svg
+                  class="w-5 h-5 text-pink-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M2.003 2.833C2.003 1.82 2.833 1 3.847 1h12.306c1.014 0 1.844.82 1.844 1.833v17.334c0 1.013-.83 1.833-1.844 1.833H3.847c-1.014 0-1.844-.82-1.844-1.833V2.833zM14.5 15.5c0 .276-.224.5-.5.5h-1.5c-.276 0-.5-.224-.5-.5v-1.5c0-.276.224-.5.5-.5h1.5c.276 0 .5.224.5.5v1.5zm-3 0c0 .276-.224.5-.5.5h-1.5c-.276 0-.5-.224-.5-.5v-1.5c0-.276.224-.5.5-.5h1.5c.276 0 .5.224.5.5v1.5zm-3 0c0 .276-.224.5-.5.5h-1.5c-.276 0-.5-.224-.5-.5v-1.5c0-.276.224-.5.5-.5h1.5c.276 0 .5.224.5.5v1.5z"
+                  />
+                </svg>
+                <span class="text-gray-300">@marysfashion</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+          <p class="text-gray-400">
+            © 2024 Mary's Fashion. Todos os direitos reservados.
+          </p>
+        </div>
+      </div>
+    </footer>
+  `,
+  styles: [],
+})
+export class FooterComponent {}

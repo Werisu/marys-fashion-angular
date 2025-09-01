@@ -1,101 +1,184 @@
-# MarysFashionAngular
+# Mary's Fashion - Site de Catálogo de Roupas
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Um site moderno e responsivo para catálogo de roupas femininas, desenvolvido com Angular e Tailwind CSS.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## 🚀 Funcionalidades
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-standalone-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+### ✨ Página Inicial
 
-## Run tasks
+- **Banner principal** com chamada para ação
+- **Seção de categorias** com navegação visual
+- **Produtos em destaque** para mostrar as melhores peças
+- **Seção "Sobre nós"** com informações da empresa
+- **Botões de WhatsApp** para contato direto
 
-To run the dev server for your app, use:
+### 🛍️ Catálogo de Produtos
 
-```sh
-npx nx serve marys-fashion-angular
+- **Grid responsivo** de produtos
+- **Filtros por categoria** para facilitar a busca
+- **Sistema de busca** por nome, descrição ou categoria
+- **Ordenação** por nome, preço ou destaque
+- **Paginação** com botão "Carregar mais"
+- **Filtros ativos** com opção de limpeza
+
+### 📱 Detalhes do Produto
+
+- **Galeria de imagens** com miniaturas
+- **Informações completas** do produto
+- **Tamanhos e cores** disponíveis
+- **Status de estoque** em tempo real
+- **Produtos relacionados** da mesma categoria
+- **Integração direta** com WhatsApp para pedidos
+
+### 📱 Design Responsivo
+
+- **Mobile-first** design
+- **Navegação adaptativa** para dispositivos móveis
+- **Grid flexível** que se adapta a diferentes telas
+- **Componentes otimizados** para touch
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Angular 20** - Framework principal
+- **Tailwind CSS** - Framework de CSS utilitário
+- **TypeScript** - Linguagem de programação
+- **RxJS** - Programação reativa
+- **Angular Router** - Navegação entre páginas
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── app/
+│   ├── components/          # Componentes reutilizáveis
+│   │   ├── header/         # Cabeçalho com navegação
+│   │   ├── footer/         # Rodapé com informações
+│   │   └── product-card/   # Card de produto
+│   ├── models/             # Interfaces e tipos
+│   │   └── product.model.ts
+│   ├── pages/              # Páginas da aplicação
+│   │   ├── home/           # Página inicial
+│   │   ├── catalog/        # Catálogo de produtos
+│   │   └── product-detail/ # Detalhes do produto
+│   ├── services/           # Serviços e lógica de negócio
+│   │   └── product.service.ts
+│   ├── app.routes.ts       # Configuração de rotas
+│   ├── app.config.ts       # Configuração da aplicação
+│   └── app.ts              # Componente principal
+├── styles.scss             # Estilos globais com Tailwind
+└── main.ts                 # Ponto de entrada
 ```
 
-To create a production bundle:
+## 🚀 Como Executar
 
-```sh
-npx nx build marys-fashion-angular
+### Pré-requisitos
+
+- Node.js (versão 18 ou superior)
+- npm ou yarn
+
+### Instalação
+
+1. Clone o repositório:
+
+```bash
+git clone <url-do-repositorio>
+cd marys-fashion-angular
 ```
 
-To see all available targets to run for a project, run:
+2. Instale as dependências:
 
-```sh
-npx nx show project marys-fashion-angular
+```bash
+npm install
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+3. Execute a aplicação:
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/angular:app demo
+```bash
+npm start
 ```
 
-To generate a new library, use:
+4. Abra o navegador em `http://localhost:4200`
 
-```sh
-npx nx g @nx/angular:lib mylib
+### Build para Produção
+
+```bash
+npm run build
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+## 📱 Funcionalidades de WhatsApp
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+O site está integrado com WhatsApp para facilitar os pedidos:
 
-## Set up CI!
+- **Botão principal** no cabeçalho
+- **Botões em cada produto** para pedidos específicos
+- **Mensagens pré-formatadas** com informações do produto
+- **Link direto** para o WhatsApp Business
 
-### Step 1
+### Configuração do WhatsApp
 
-To connect to Nx Cloud, run the following command:
+Para personalizar o número do WhatsApp, edite os arquivos:
 
-```sh
-npx nx connect
-```
+- `src/app/components/header/header.component.ts`
+- `src/app/components/footer/footer.component.ts`
+- `src/app/components/product-card/product-card.component.ts`
+- `src/app/pages/product-detail/product-detail.component.ts`
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+Substitua `5511999999999` pelo seu número real.
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 🎨 Personalização
 
-### Step 2
+### Cores
 
-Use the following command to configure a CI workflow for your workspace:
+As cores principais podem ser alteradas no arquivo `tailwind.config.js`:
 
-```sh
-npx nx g ci-workflow
-```
+- **Primária**: Rosa (`pink-600`)
+- **Secundária**: Verde para WhatsApp (`green-500`)
+- **Neutras**: Tons de cinza (`gray-50`, `gray-900`)
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Produtos
 
-## Install Nx Console
+Para adicionar ou modificar produtos, edite o arquivo `src/app/services/product.service.ts`:
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+- Adicione novos produtos no array `products`
+- Modifique categorias no array `categories`
+- Atualize imagens, preços e descrições
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### Imagens
 
-## Useful links
+- Use URLs de imagens externas (como Unsplash)
+- Ou adicione imagens locais na pasta `src/assets/`
+- Mantenha proporção 4:5 para melhor visualização
 
-Learn more:
+## 🔧 Configurações Adicionais
 
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-standalone-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### SEO
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Títulos e meta tags podem ser adicionados em cada componente
+- Use Angular Universal para SSR se necessário
+
+### Analytics
+
+- Integre Google Analytics ou outras ferramentas
+- Adicione tracking de eventos de clique
+
+### Performance
+
+- Implemente lazy loading para imagens
+- Use service workers para cache offline
+- Otimize bundles com tree shaking
+
+## 📞 Suporte
+
+Para dúvidas ou suporte:
+
+- Abra uma issue no repositório
+- Entre em contato via WhatsApp
+- Consulte a documentação do Angular
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Sinta-se livre para usar, modificar e distribuir.
+
+---
+
+**Desenvolvido com ❤️ para Mary's Fashion**
