@@ -1,8 +1,18 @@
-import { Component, EventEmitter, Output, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
-import { ProductSearch, AutocompleteSuggestion } from '@marys-fashion-angular/product-data-access';
+import {
+  AutocompleteSuggestion,
+  ProductSearch,
+} from '@marys-fashion-angular/product-data-access';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'lib-product-search',
@@ -28,12 +38,8 @@ export class ProductSearchComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Configurar busca com debounce para autocomplete
     this.searchInput$
-      .pipe(
-        takeUntil(this.destroy$),
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(query => {
+      .pipe(takeUntil(this.destroy$), debounceTime(300), distinctUntilChanged())
+      .subscribe((query) => {
         if (query.trim().length >= 2) {
           this.loadSuggestions(query);
         } else {
@@ -59,7 +65,7 @@ export class ProductSearchComponent implements OnInit, OnDestroy {
       this.isSearching = true;
       this.searchEvent.emit(this.searchTerm.trim());
       this.showSuggestions = false;
-      
+
       // Simular delay de busca (remover em implementação real)
       setTimeout(() => {
         this.isSearching = false;
@@ -120,7 +126,7 @@ export class ProductSearchComponent implements OnInit, OnDestroy {
     if (this.suggestions.length === 0) return;
 
     this.selectedIndex += direction;
-    
+
     if (this.selectedIndex >= this.suggestions.length) {
       this.selectedIndex = 0;
     } else if (this.selectedIndex < 0) {
@@ -138,16 +144,16 @@ export class ProductSearchComponent implements OnInit, OnDestroy {
         console.error('Erro ao carregar sugestões:', error);
         this.suggestions = [];
         this.showSuggestions = false;
-      }
+      },
     });
   }
 
   getSuggestionClass(index: number): string {
-    const baseClasses = 'px-3 py-2 text-sm cursor-pointer transition-colors';
+    const baseClasses = 'px-4 py-3 cursor-pointer';
     if (index === this.selectedIndex) {
-      return `${baseClasses} bg-blue-100 text-blue-900`;
+      return `${baseClasses} bg-blue-50 text-blue-900`;
     }
-    return `${baseClasses} hover:bg-gray-100 text-gray-700`;
+    return `${baseClasses} hover:bg-gray-50 text-gray-700`;
   }
 
   getSuggestionIcon(type: string): string {
