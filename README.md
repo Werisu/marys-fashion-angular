@@ -123,7 +123,7 @@ Para personalizar o número do WhatsApp, edite os arquivos:
 - `src/app/components/product-card/product-card.component.ts`
 - `src/app/pages/product-detail/product-detail.component.ts`
 
-Substitua `5511999999999` pelo seu número real.
+Substitua `5563992345422` pelo seu número real.
 
 ## 🎨 Personalização
 
