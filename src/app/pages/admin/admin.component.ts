@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import {
   Product,
   ProductSupabaseService,
-  SupabaseService,
 } from '@marys-fashion-angular/product-data-access';
+import { SupabaseService } from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'app-admin',

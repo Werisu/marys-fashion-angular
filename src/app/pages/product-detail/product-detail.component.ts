@@ -5,8 +5,8 @@ import { Footer, Header } from '@marys-fashion-angular/layout';
 import {
   Product,
   ProductSupabaseService,
-  SupabaseService,
 } from '@marys-fashion-angular/product-data-access';
+import { SupabaseService } from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'app-product-detail',

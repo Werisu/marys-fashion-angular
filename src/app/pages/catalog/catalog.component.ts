@@ -7,8 +7,8 @@ import {
   Category,
   Product,
   ProductSupabaseService,
-  SupabaseService,
 } from '@marys-fashion-angular/product-data-access';
+import { SupabaseService } from '@marys-fashion-angular/supabase';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
 @Component({
