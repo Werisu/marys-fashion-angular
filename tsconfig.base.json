@@ -8,6 +8,7 @@
     "lib": ["es2020", "dom"],
     "baseUrl": ".",
     "paths": {
+      "@marys-fashion-angular/home": ["modules/feature/home/src/index.ts"],
       "@marys-fashion-angular/layout": ["modules/feature/layout/src/index.ts"],
       "@marys-fashion-angular/product-data-access": [
         "modules/data-access/product/src/index.ts"
