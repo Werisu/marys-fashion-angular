@@ -100,6 +100,56 @@
         </svg>
       </button>
     </div>
+
+    <!-- Dropdown de sugestões -->
+    <div
+      *ngIf="showSuggestions && suggestions.length > 0"
+      class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
+    >
+      <div
+        *ngFor="let suggestion of suggestions; let i = index"
+        [class]="getSuggestionClass(i)"
+        (click)="selectSuggestion(suggestion)"
+        (mouseenter)="selectedIndex = i"
+        (keydown.enter)="selectSuggestion(suggestion)"
+        (keydown.space)="selectSuggestion(suggestion)"
+        tabindex="0"
+        role="option"
+        [attr.aria-selected]="i === selectedIndex"
+        [attr.aria-label]="'Sugestão: ' + suggestion.text + ' (' + suggestion.type + ')'"
+      >
+        <div class="flex items-center space-x-3">
+          <!-- Ícone baseado no tipo -->
+          <div class="flex-shrink-0">
+            <svg
+              class="h-4 w-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                [attr.d]="getSuggestionIcon(suggestion.type)"
+              ></path>
+            </svg>
+          </div>
+
+          <!-- Texto da sugestão -->
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-gray-900">
+              <span
+                [innerHTML]="suggestion.highlight || suggestion.text"
+              ></span>
+            </div>
+            <div class="text-xs text-gray-500 capitalize">
+              {{ suggestion.type }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Resultados da busca (exemplo) -->

@@ -8,7 +8,7 @@ import {
   Product,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
-import { ProductSearch } from '@marys-fashion-angular/product-search';
+import { ProductSearchComponent } from '@marys-fashion-angular/product-search';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
@@ -21,7 +21,7 @@ import { ProductCardComponent } from '../../components/product-card/product-card
     Header,
     Footer,
     ProductCardComponent,
-    ProductSearch,
+    ProductSearchComponent,
   ],
   template: `
     <lib-header></lib-header>
