@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+import { environment } from 'environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 // Interface para o ambiente
@@ -10,8 +11,8 @@ interface SupabaseConfig {
 
 // Configuração temporária - deve ser configurada externamente
 const DEFAULT_CONFIG: SupabaseConfig = {
-  url: 'https://sua-url-do-supabase.supabase.co',
-  anonKey: 'sua-chave-anonima',
+  url: environment.supabase.url,
+  anonKey: environment.supabase.anonKey,
 };
 
 /**
