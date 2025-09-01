@@ -159,8 +159,8 @@ import { SupabaseService } from '../../services/supabase.service';
               <label class="flex items-center">
                 <input
                   type="checkbox"
-                  [(ngModel)]="productForm.inStock"
-                  name="inStock"
+                  [(ngModel)]="productForm.in_stock"
+                  name="in_stock"
                   class="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
                 />
                 <span class="ml-2 text-sm text-gray-700">Em estoque</span>
@@ -267,13 +267,13 @@ import { SupabaseService } from '../../services/supabase.service';
                   <td class="px-6 py-4 whitespace-nowrap">
                     <span
                       [class]="
-                        product.inStock
+                        product.in_stock
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       "
                       class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                     >
-                      {{ product.inStock ? 'Em estoque' : 'Esgotado' }}
+                      {{ product.in_stock ? 'Em estoque' : 'Esgotado' }}
                     </span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -314,7 +314,7 @@ export class AdminComponent implements OnInit {
     images: '',
     sizes: '',
     colors: '',
-    inStock: true,
+    in_stock: true,
     featured: false,
   };
 
@@ -373,7 +373,7 @@ export class AdminComponent implements OnInit {
         .split(',')
         .map((color) => color.trim())
         .filter((color) => color),
-      inStock: this.productForm.inStock,
+      in_stock: this.productForm.in_stock,
       featured: this.productForm.featured,
     };
 
@@ -411,7 +411,7 @@ export class AdminComponent implements OnInit {
       images: product.images.join(', '),
       sizes: product.sizes.join(', '),
       colors: product.colors.join(', '),
-      inStock: product.inStock,
+      in_stock: product.in_stock,
       featured: product.featured || false,
     };
   }
@@ -440,7 +440,7 @@ export class AdminComponent implements OnInit {
       images: '',
       sizes: '',
       colors: '',
-      inStock: true,
+      in_stock: true,
       featured: false,
     };
   }

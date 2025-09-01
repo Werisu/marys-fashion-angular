@@ -1,14 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
-import {
-  Category,
-  Product,
-} from '../../../../modules/data-access/product/src/lib/models/product.model';
+import { Category, Product } from '@marys-fashion-angular/product-data-access';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { ProductService } from '../../services/product.service';
+import { ProductSupabaseService } from '../../services/product-supabase.service';
 
 @Component({
   selector: 'app-catalog',
@@ -34,10 +31,13 @@ import { ProductService } from '../../services/product.service';
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Search -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
+              <label
+                for="search"
+                class="block text-sm font-medium text-gray-700 mb-2"
                 >Buscar Produtos</label
               >
               <input
+                id="search"
                 type="text"
                 [(ngModel)]="searchQuery"
                 (input)="onSearch()"
@@ -48,10 +48,13 @@ import { ProductService } from '../../services/product.service';
 
             <!-- Category Filter -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
+              <label
+                for="category"
+                class="block text-sm font-medium text-gray-700 mb-2"
                 >Categoria</label
               >
               <select
+                id="category"
                 [(ngModel)]="selectedCategory"
                 (change)="onCategoryChange()"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
@@ -59,7 +62,7 @@ import { ProductService } from '../../services/product.service';
                 <option value="">Todas as Categorias</option>
                 <option
                   *ngFor="let category of categories"
-                  [value]="category.id"
+                  [value]="category.name"
                 >
                   {{ category.name }}
                 </option>
@@ -68,10 +71,13 @@ import { ProductService } from '../../services/product.service';
 
             <!-- Sort -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2"
+              <label
+                for="sort"
+                class="block text-sm font-medium text-gray-700 mb-2"
                 >Ordenar por</label
               >
               <select
+                id="sort"
                 [(ngModel)]="sortBy"
                 (change)="onSortChange()"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
@@ -207,11 +213,9 @@ export class CatalogComponent implements OnInit {
   itemsPerPage = 12;
   currentPage = 1;
 
-  constructor(
-    private productService: ProductService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  private productService = inject(ProductSupabaseService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   ngOnInit() {
     this.loadProducts();
@@ -304,9 +308,8 @@ export class CatalogComponent implements OnInit {
     }
   }
 
-  getCategoryName(categoryId: string): string {
-    const category = this.categories.find((c) => c.id === categoryId);
-    return category ? category.name : categoryId;
+  getCategoryName(categoryName: string): string {
+    return categoryName;
   }
 
   clearSearch() {

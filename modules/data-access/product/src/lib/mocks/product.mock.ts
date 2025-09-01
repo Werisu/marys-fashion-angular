@@ -14,7 +14,7 @@ export const mockProducts: Product[] = [
     ],
     sizes: ['P', 'M', 'G', 'GG'],
     colors: ['Azul', 'Rosa'],
-    inStock: true,
+    in_stock: true,
     featured: true,
   },
   {
@@ -30,7 +30,7 @@ export const mockProducts: Product[] = [
     ],
     sizes: ['P', 'M', 'G'],
     colors: ['Preto', 'Bege'],
-    inStock: true,
+    in_stock: true,
     featured: true,
   },
   {
@@ -46,7 +46,7 @@ export const mockProducts: Product[] = [
     ],
     sizes: ['36', '38', '40', '42', '44'],
     colors: ['Azul', 'Preto'],
-    inStock: true,
+    in_stock: true,
   },
   {
     id: 4,
@@ -61,7 +61,7 @@ export const mockProducts: Product[] = [
     ],
     sizes: ['P', 'M', 'G'],
     colors: ['Branco', 'Azul', 'Rosa'],
-    inStock: true,
+    in_stock: true,
   },
   {
     id: 5,
@@ -76,7 +76,7 @@ export const mockProducts: Product[] = [
     ],
     sizes: ['P', 'M', 'G'],
     colors: ['Preto', 'Azul Marinho'],
-    inStock: true,
+    in_stock: true,
   },
   {
     id: 6,
@@ -91,6 +91,6 @@ export const mockProducts: Product[] = [
     ],
     sizes: ['P', 'M', 'G'],
     colors: ['Preto', 'Azul'],
-    inStock: true,
+    in_stock: true,
   },
 ];

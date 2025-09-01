@@ -7,7 +7,7 @@ import {
   Product,
 } from '../../../../modules/data-access/product/src/lib/models/product.model';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { ProductService } from '../../services/product.service';
+import { ProductSupabaseService } from '../../services/product-supabase.service';
 
 @Component({
   selector: 'app-home',
@@ -220,7 +220,10 @@ export class HomeComponent implements OnInit {
   categories: Category[] = [];
   featuredProducts: Product[] = [];
 
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(
+    private productService: ProductSupabaseService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadCategories();
@@ -243,7 +246,7 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/catalogo']);
   }
 
-  goToCategory(categoryId: string) {
+  goToCategory(categoryId: number) {
     this.router.navigate(['/catalogo'], {
       queryParams: { categoria: categoryId },
     });
