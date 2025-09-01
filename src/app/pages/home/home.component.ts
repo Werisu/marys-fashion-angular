@@ -2,8 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
+import {
+  Category,
+  Product,
+} from '../../../../modules/data-access/product/src/lib/models/product.model';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { Category, Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 
 @Component({
