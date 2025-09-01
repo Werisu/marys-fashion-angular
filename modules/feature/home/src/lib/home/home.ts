@@ -7,7 +7,7 @@ import {
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
-import { ProductCardComponent } from '../../../../../../src/app/components/product-card/product-card.component';
+import { ProductCardComponent } from './../../../../../../src/app/components/product-card/product-card.component';
 
 @Component({
   selector: 'lib-home',
