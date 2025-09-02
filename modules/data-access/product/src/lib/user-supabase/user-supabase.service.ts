@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from '@marys-fashion-angular/supabase';
 import { Observable, catchError, from, map, of } from 'rxjs';
 import {
@@ -12,13 +12,15 @@ import {
   providedIn: 'root',
 })
 export class UserSupabaseService {
-  constructor(private supabaseService: SupabaseService) {}
+  private supabaseService = inject(SupabaseService);
 
   /**
    * Obtém todos os usuários com filtros opcionais
    */
   getUsers(filters?: UserFilters): Observable<User[]> {
-    return from(this.supabaseService.getClient().auth.admin.listUsers()).pipe(
+    return from(
+      this.supabaseService.getAdminClient().auth.admin.listUsers()
+    ).pipe(
       map((response) => {
         if (response.error) {
           throw new Error(response.error.message);
@@ -27,13 +29,13 @@ export class UserSupabaseService {
         let users = response.data.users.map((user) => ({
           id: user.id,
           email: user.email || '',
-          role: this.mapUserRole(user.user_metadata?.role || 'user'),
-          is_active: user.user_metadata?.is_active !== false,
+          role: this.mapUserRole(user.user_metadata?.['role'] || 'user'),
+          is_active: user.user_metadata?.['is_active'] !== false,
           created_at: user.created_at,
           updated_at: user.updated_at || user.created_at,
           last_sign_in_at: user.last_sign_in_at,
-          full_name: user.user_metadata?.full_name,
-          phone: user.user_metadata?.phone,
+          full_name: user.user_metadata?.['full_name'],
+          phone: user.user_metadata?.['phone'],
         }));
 
         // Aplicar filtros
@@ -71,7 +73,7 @@ export class UserSupabaseService {
    */
   getUserById(id: string): Observable<User | null> {
     return from(
-      this.supabaseService.getClient().auth.admin.getUserById(id)
+      this.supabaseService.getAdminClient().auth.admin.getUserById(id)
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -84,13 +86,13 @@ export class UserSupabaseService {
         return {
           id: user.id,
           email: user.email || '',
-          role: this.mapUserRole(user.user_metadata?.role || 'user'),
-          is_active: user.user_metadata?.is_active !== false,
+          role: this.mapUserRole(user.user_metadata?.['role'] || 'user'),
+          is_active: user.user_metadata?.['is_active'] !== false,
           created_at: user.created_at,
           updated_at: user.updated_at || user.created_at,
           last_sign_in_at: user.last_sign_in_at,
-          full_name: user.user_metadata?.full_name,
-          phone: user.user_metadata?.phone,
+          full_name: user.user_metadata?.['full_name'],
+          phone: user.user_metadata?.['phone'],
         };
       }),
       catchError((error) => {
@@ -105,7 +107,7 @@ export class UserSupabaseService {
    */
   createUser(userData: CreateUserRequest): Observable<User | null> {
     return from(
-      this.supabaseService.getClient().auth.admin.createUser({
+      this.supabaseService.getAdminClient().auth.admin.createUser({
         email: userData.email,
         password: userData.password,
         email_confirm: true,
@@ -128,13 +130,13 @@ export class UserSupabaseService {
         return {
           id: user.id,
           email: user.email || '',
-          role: this.mapUserRole(user.user_metadata?.role || 'user'),
-          is_active: user.user_metadata?.is_active !== false,
+          role: this.mapUserRole(user.user_metadata?.['role'] || 'user'),
+          is_active: user.user_metadata?.['is_active'] !== false,
           created_at: user.created_at,
           updated_at: user.updated_at || user.created_at,
           last_sign_in_at: user.last_sign_in_at,
-          full_name: user.user_metadata?.full_name,
-          phone: user.user_metadata?.phone,
+          full_name: user.user_metadata?.['full_name'],
+          phone: user.user_metadata?.['phone'],
         };
       }),
       catchError((error) => {
@@ -149,14 +151,16 @@ export class UserSupabaseService {
    */
   updateUser(userData: UpdateUserRequest): Observable<User | null> {
     return from(
-      this.supabaseService.getClient().auth.admin.updateUserById(userData.id, {
-        user_metadata: {
-          role: userData.role,
-          is_active: userData.is_active,
-          full_name: userData.full_name,
-          phone: userData.phone,
-        },
-      })
+      this.supabaseService
+        .getAdminClient()
+        .auth.admin.updateUserById(userData.id, {
+          user_metadata: {
+            role: userData.role,
+            is_active: userData.is_active,
+            full_name: userData.full_name,
+            phone: userData.phone,
+          },
+        })
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -169,13 +173,13 @@ export class UserSupabaseService {
         return {
           id: user.id,
           email: user.email || '',
-          role: this.mapUserRole(user.user_metadata?.role || 'user'),
-          is_active: user.user_metadata?.is_active !== false,
+          role: this.mapUserRole(user.user_metadata?.['role'] || 'user'),
+          is_active: user.user_metadata?.['is_active'] !== false,
           created_at: user.created_at,
           updated_at: user.updated_at || user.created_at,
           last_sign_in_at: user.last_sign_in_at,
-          full_name: user.user_metadata?.full_name,
-          phone: user.user_metadata?.phone,
+          full_name: user.user_metadata?.['full_name'],
+          phone: user.user_metadata?.['phone'],
         };
       }),
       catchError((error) => {
@@ -190,7 +194,7 @@ export class UserSupabaseService {
    */
   deactivateUser(id: string): Observable<boolean> {
     return from(
-      this.supabaseService.getClient().auth.admin.updateUserById(id, {
+      this.supabaseService.getAdminClient().auth.admin.updateUserById(id, {
         user_metadata: { is_active: false },
       })
     ).pipe(
@@ -212,7 +216,7 @@ export class UserSupabaseService {
    */
   activateUser(id: string): Observable<boolean> {
     return from(
-      this.supabaseService.getClient().auth.admin.updateUserById(id, {
+      this.supabaseService.getAdminClient().auth.admin.updateUserById(id, {
         user_metadata: { is_active: true },
       })
     ).pipe(
@@ -234,7 +238,7 @@ export class UserSupabaseService {
    */
   deleteUser(id: string): Observable<boolean> {
     return from(
-      this.supabaseService.getClient().auth.admin.deleteUser(id)
+      this.supabaseService.getAdminClient().auth.admin.deleteUser(id)
     ).pipe(
       map((response) => {
         if (response.error) {
