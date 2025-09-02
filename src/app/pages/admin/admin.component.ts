@@ -6,7 +6,10 @@ import {
   Product,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
-import { SupabaseService } from '@marys-fashion-angular/supabase';
+import {
+  FileUploadService,
+  SupabaseService,
+} from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'app-admin',
@@ -46,7 +49,9 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
           <form (ngSubmit)="saveProduct()" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="name"
+                  class="block text-sm font-medium text-gray-700"
                   >Nome</label
                 >
                 <input
@@ -59,7 +64,9 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="price"
+                  class="block text-sm font-medium text-gray-700"
                   >Preço</label
                 >
                 <input
@@ -73,7 +80,9 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="category"
+                  class="block text-sm font-medium text-gray-700"
                   >Categoria</label
                 >
                 <select
@@ -93,7 +102,9 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="sizes"
+                  class="block text-sm font-medium text-gray-700"
                   >Tamanhos (separados por vírgula)</label
                 >
                 <input
@@ -106,7 +117,9 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700"
+                <label
+                  for="colors"
+                  class="block text-sm font-medium text-gray-700"
                   >Cores (separadas por vírgula)</label
                 >
                 <input
@@ -118,22 +131,108 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
                 />
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700"
-                  >Imagens (URLs separadas por vírgula)</label
+              <div class="md:col-span-2">
+                <label
+                  for="imageUpload"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Upload de Imagens</label
                 >
-                <input
-                  type="text"
-                  [(ngModel)]="productForm.images"
-                  name="images"
-                  placeholder="https://exemplo.com/imagem1.jpg, https://exemplo.com/imagem2.jpg"
-                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-                />
+                <div class="space-y-4">
+                  <!-- Input de arquivo -->
+                  <div class="flex items-center space-x-4">
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      multiple
+                      accept="image/*"
+                      (change)="onFileSelected($event)"
+                      class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+                    />
+                    <button
+                      type="button"
+                      (click)="uploadImages()"
+                      [disabled]="selectedFiles.length === 0 || uploading"
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                    >
+                      {{ uploading ? 'Enviando...' : 'Enviar Imagens' }}
+                    </button>
+                  </div>
+
+                  <!-- Preview das imagens selecionadas -->
+                  <div
+                    *ngIf="selectedFiles.length > 0"
+                    class="grid grid-cols-2 md:grid-cols-4 gap-4"
+                  >
+                    <div
+                      *ngFor="let file of selectedFiles; let i = index"
+                      class="relative"
+                    >
+                      <img
+                        [src]="getFilePreview(file)"
+                        [alt]="'Preview ' + (i + 1)"
+                        class="w-full h-24 object-cover rounded-lg border border-gray-300"
+                      />
+                      <button
+                        type="button"
+                        (click)="removeSelectedFile(i)"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Imagens já enviadas -->
+                  <div *ngIf="uploadedImages.length > 0" class="space-y-2">
+                    <div class="block text-sm font-medium text-gray-700">
+                      Imagens Enviadas:
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div
+                        *ngFor="let image of uploadedImages; let i = index"
+                        class="relative"
+                      >
+                        <img
+                          [src]="image"
+                          [alt]="'Imagem ' + (i + 1)"
+                          class="w-full h-24 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          type="button"
+                          (click)="removeUploadedImage(i)"
+                          class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Campo de texto para URLs (fallback) -->
+                  <div class="mt-4">
+                    <label
+                      for="manualImages"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Ou adicione URLs de imagens (separadas por vírgula)
+                    </label>
+                    <input
+                      type="text"
+                      id="manualImages"
+                      [(ngModel)]="productForm.images"
+                      name="images"
+                      placeholder="https://exemplo.com/imagem1.jpg, https://exemplo.com/imagem2.jpg"
+                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700"
+              <label
+                for="description"
+                class="block text-sm font-medium text-gray-700"
                 >Descrição</label
               >
               <textarea
@@ -306,7 +405,10 @@ export class AdminComponent implements OnInit {
   products: Product[] = [];
   currentUser: any = null;
   saving = false;
+  uploading = false;
   editingProduct: Product | null = null;
+  selectedFiles: File[] = [];
+  uploadedImages: string[] = [];
 
   productForm = {
     name: '',
@@ -322,6 +424,7 @@ export class AdminComponent implements OnInit {
 
   private supabaseService = inject(SupabaseService);
   private productService = inject(ProductSupabaseService);
+  private fileUploadService = inject(FileUploadService);
   private router = inject(Router);
 
   ngOnInit() {
@@ -347,6 +450,68 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (files) {
+      this.selectedFiles = [
+        ...this.selectedFiles,
+        ...(Array.from(files) as File[]),
+      ];
+    }
+  }
+
+  removeSelectedFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  removeUploadedImage(index: number) {
+    this.uploadedImages.splice(index, 1);
+  }
+
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
+  }
+
+  async uploadImages() {
+    if (this.selectedFiles.length === 0) return;
+
+    this.uploading = true;
+
+    try {
+      const results = await this.fileUploadService
+        .uploadMultipleImages(this.selectedFiles)
+        .toPromise();
+
+      if (results) {
+        const successfulUploads = results.filter((result) => result.success);
+        const newImageUrls = successfulUploads.map((result) => result.url!);
+
+        this.uploadedImages = [...this.uploadedImages, ...newImageUrls];
+        this.selectedFiles = [];
+
+        // Atualizar o campo de imagens com as URLs
+        const allImages = [...this.uploadedImages];
+        if (this.productForm.images) {
+          const existingUrls = this.productForm.images
+            .split(',')
+            .map((url) => url.trim())
+            .filter((url) => url);
+          allImages.push(...existingUrls);
+        }
+        this.productForm.images = allImages.join(', ');
+
+        console.log('Imagens enviadas com sucesso:', newImageUrls);
+      }
+    } catch (error) {
+      console.error('Erro ao enviar imagens:', error);
+      alert(
+        'Erro ao enviar algumas imagens. Verifique o console para mais detalhes.'
+      );
+    } finally {
+      this.uploading = false;
+    }
+  }
+
   saveProduct() {
     if (
       !this.productForm.name ||
@@ -359,15 +524,22 @@ export class AdminComponent implements OnInit {
 
     this.saving = true;
 
+    // Combinar imagens enviadas com URLs manuais
+    let allImages = [...this.uploadedImages];
+    if (this.productForm.images) {
+      const manualUrls = this.productForm.images
+        .split(',')
+        .map((url) => url.trim())
+        .filter((url) => url);
+      allImages = [...allImages, ...manualUrls];
+    }
+
     const productData = {
       name: this.productForm.name,
       description: this.productForm.description,
       price: this.productForm.price,
       category: this.productForm.category,
-      images: this.productForm.images
-        .split(',')
-        .map((url) => url.trim())
-        .filter((url) => url),
+      images: allImages,
       sizes: this.productForm.sizes
         .split(',')
         .map((size) => size.trim())
@@ -406,12 +578,13 @@ export class AdminComponent implements OnInit {
 
   editProduct(product: Product) {
     this.editingProduct = product;
+    this.uploadedImages = [...product.images];
     this.productForm = {
       name: product.name,
       description: product.description,
       price: product.price,
       category: product.category,
-      images: product.images.join(', '),
+      images: '', // Será preenchido com as imagens já enviadas
       sizes: product.sizes.join(', '),
       colors: product.colors.join(', '),
       in_stock: product.in_stock,
@@ -446,6 +619,8 @@ export class AdminComponent implements OnInit {
       in_stock: true,
       featured: false,
     };
+    this.selectedFiles = [];
+    this.uploadedImages = [];
   }
 
   async logout() {
