@@ -133,25 +133,33 @@ Após executar os SQLs acima:
 
 ## 🔧 Comandos SQL Resumidos
 
-Execute estes comandos no **SQL Editor** do Supabase:
+### **1. Executar Correção da Tabela (OBRIGATÓRIO)**
+
+**PRIMEIRO**, execute o arquivo `supabase-user-profiles-fix.sql` no **SQL Editor** do Supabase:
+
+- ✅ Adiciona coluna `is_active` à tabela `user_profiles`
+- ✅ Adiciona coluna `phone` à tabela `user_profiles`
+- ✅ Atualiza valores existentes
+
+### **2. Executar Triggers de Sincronização (OBRIGATÓRIO)**
+
+**DEPOIS**, execute o arquivo `supabase-user-sync-triggers-fixed.sql` no **SQL Editor** do Supabase:
+
+- ✅ Triggers para sincronização automática entre `auth.users` e `user_profiles`
+- ✅ Políticas RLS atualizadas (remove conflitos existentes)
+- ✅ Sincronização de usuários existentes
+- ✅ Sintaxe SQL corrigida e limpa
+- ✅ Compatível com estrutura atual da tabela
+
+### **3. Definir seu usuário como admin (substitua o email)**
 
 ```sql
--- 1. Políticas de administração
-CREATE POLICY "Administradores podem ver todos os perfis" ON user_profiles
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM auth.users
-      WHERE auth.users.id = auth.uid()
-      AND auth.users.raw_user_meta_data->>'role' = 'admin'
-    )
-  );
-
--- 2. Definir seu usuário como admin (substitua o email)
+-- Atualizar seu usuário para ter role de admin
 UPDATE auth.users
 SET raw_user_meta_data = COALESCE(raw_user_meta_data, '{}'::jsonb) || '{"role": "admin"}'::jsonb
 WHERE email = 'seu-email@exemplo.com';
 
--- 3. Criar perfil de admin
+-- Criar perfil de admin (se não existir)
 INSERT INTO user_profiles (id, email, full_name, role)
 SELECT
   id,

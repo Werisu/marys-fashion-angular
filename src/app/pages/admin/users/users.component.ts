@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -498,11 +498,9 @@ export class UsersComponent implements OnInit {
   roleFilter = '';
   statusFilter = '';
 
-  constructor(
-    private userService: UserSupabaseService,
-    private supabaseService: SupabaseService,
-    private router: Router
-  ) {}
+  private userService = inject(UserSupabaseService);
+  private supabaseService = inject(SupabaseService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.loadCurrentUser();
