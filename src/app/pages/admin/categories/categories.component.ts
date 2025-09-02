@@ -7,7 +7,10 @@ import {
   CategorySupabaseService,
   CreateCategoryRequest,
 } from '@marys-fashion-angular/product-data-access';
-import { SupabaseService } from '@marys-fashion-angular/supabase';
+import {
+  FileUploadService,
+  SupabaseService,
+} from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'app-categories',
@@ -31,9 +34,7 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
               </h1>
             </div>
             <div class="flex items-center space-x-4">
-              <span class="text-sm text-gray-600">
-                Olá, {{ currentUser?.email }}
-              </span>
+              <span class="text-sm text-gray-600"> Olá, {{ userEmail }} </span>
               <button
                 (click)="logout()"
                 class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
@@ -83,16 +84,84 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
             </div>
 
             <div>
-              <label for="image" class="block text-sm font-medium text-gray-700"
-                >URL da Imagem</label
+              <label
+                for="imageUpload"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Upload de Imagem</label
               >
-              <input
-                type="url"
-                [(ngModel)]="categoryForm.image"
-                name="image"
-                placeholder="https://exemplo.com/imagem.jpg"
-                class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-              />
+              <div class="space-y-4">
+                <!-- Input de arquivo -->
+                <div class="flex items-center space-x-4">
+                  <input
+                    type="file"
+                    id="imageUpload"
+                    accept="image/*"
+                    (change)="onFileSelected($event)"
+                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+                  />
+                  <button
+                    type="button"
+                    (click)="uploadImage()"
+                    [disabled]="!selectedFile || uploading"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                  >
+                    {{ uploading ? 'Enviando...' : 'Enviar Imagem' }}
+                  </button>
+                </div>
+
+                <!-- Preview da imagem selecionada -->
+                <div *ngIf="selectedFile" class="relative">
+                  <img
+                    [src]="getFilePreview(selectedFile)"
+                    [alt]="'Preview da imagem'"
+                    class="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                  />
+                  <button
+                    type="button"
+                    (click)="removeSelectedFile()"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <!-- Imagem já enviada -->
+                <div *ngIf="uploadedImageUrl" class="relative">
+                  <div class="block text-sm font-medium text-gray-700 mb-2">
+                    Imagem Enviada:
+                  </div>
+                  <img
+                    [src]="uploadedImageUrl"
+                    [alt]="'Imagem da categoria'"
+                    class="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                  />
+                  <button
+                    type="button"
+                    (click)="removeUploadedImage()"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <!-- Campo de texto para URL (fallback) -->
+                <div class="mt-4">
+                  <label
+                    for="manualImage"
+                    class="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Ou adicione URL da imagem
+                  </label>
+                  <input
+                    type="url"
+                    id="manualImage"
+                    [(ngModel)]="categoryForm.image"
+                    name="image"
+                    placeholder="https://exemplo.com/imagem.jpg"
+                    class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                  />
+                </div>
+              </div>
             </div>
 
             <div class="flex space-x-4">
@@ -215,9 +284,16 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
 })
 export class CategoriesComponent implements OnInit {
   categories: Category[] = [];
-  currentUser: any = null;
+  currentUser: unknown = null;
+
+  get userEmail(): string {
+    return (this.currentUser as any)?.email || 'Usuário';
+  }
   saving = false;
+  uploading = false;
   editingCategory: Category | null = null;
+  selectedFile: File | null = null;
+  uploadedImageUrl: string | null = null;
 
   categoryForm: CreateCategoryRequest = {
     name: '',
@@ -227,6 +303,7 @@ export class CategoriesComponent implements OnInit {
 
   private supabaseService = inject(SupabaseService);
   private categoryService = inject(CategorySupabaseService);
+  private fileUploadService = inject(FileUploadService);
   private router = inject(Router);
 
   ngOnInit() {
@@ -238,7 +315,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   async checkAuth() {
-    this.supabaseService.getCurrentUser().subscribe((user) => {
+    this.supabaseService.getCurrentUser().subscribe((user: unknown) => {
       this.currentUser = user;
       if (!user) {
         this.router.navigate(['/login']);
@@ -250,6 +327,51 @@ export class CategoriesComponent implements OnInit {
     this.categoryService.getCategories().subscribe((categories) => {
       this.categories = categories;
     });
+  }
+
+  onFileSelected(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
+
+  removeSelectedFile() {
+    this.selectedFile = null;
+  }
+
+  removeUploadedImage() {
+    this.uploadedImageUrl = null;
+    this.categoryForm.image = '';
+  }
+
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
+  }
+
+  async uploadImage() {
+    if (!this.selectedFile) return;
+
+    this.uploading = true;
+
+    try {
+      const result = await this.fileUploadService
+        .uploadImage(this.selectedFile, 'category-images')
+        .toPromise();
+
+      if (result && result.success && result.url) {
+        this.uploadedImageUrl = result.url;
+        this.categoryForm.image = result.url;
+        this.selectedFile = null;
+        console.log('Imagem enviada com sucesso:', result.url);
+      }
+    } catch (error) {
+      console.error('Erro ao enviar imagem:', error);
+      alert('Erro ao enviar imagem. Verifique o console para mais detalhes.');
+    } finally {
+      this.uploading = false;
+    }
   }
 
   saveCategory() {
@@ -291,6 +413,7 @@ export class CategoriesComponent implements OnInit {
 
   editCategory(category: Category) {
     this.editingCategory = category;
+    this.uploadedImageUrl = category.image || null;
     this.categoryForm = {
       name: category.name,
       description: category.description || '',
@@ -319,6 +442,8 @@ export class CategoriesComponent implements OnInit {
       description: '',
       image: '',
     };
+    this.selectedFile = null;
+    this.uploadedImageUrl = null;
   }
 
   goBack() {

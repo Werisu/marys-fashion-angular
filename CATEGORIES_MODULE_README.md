@@ -15,9 +15,16 @@ Este módulo permite gerenciar as categorias de produtos de forma completa, incl
 
 - **Nome**: Nome da categoria (obrigatório, único)
 - **Descrição**: Descrição opcional da categoria
-- **Imagem**: URL da imagem representativa
+- **Imagem**: Upload direto de imagem ou URL da imagem representativa
 - **Data de Criação**: Automática
 - **Data de Atualização**: Automática
+
+### ✅ **Upload de Imagens**
+
+- **Upload Direto**: Selecione e envie imagens diretamente para o Supabase Storage
+- **Preview**: Visualização da imagem antes e depois do upload
+- **Fallback**: Campo de URL manual como alternativa
+- **Bucket**: `category-images` no Supabase Storage
 
 ### ✅ **Interface Administrativa**
 
@@ -108,6 +115,28 @@ CREATE TABLE public.categories (
 ### **2. Executar o Script SQL**
 
 Execute o arquivo `database-setup-categories-updated.sql` no SQL Editor do Supabase para configurar as políticas RLS:
+
+### **3. Configurar Storage para Imagens**
+
+**⚠️ IMPORTANTE**: Devido a limitações de permissão, você precisa criar o bucket manualmente:
+
+#### **Opção A: Via Dashboard (Recomendado)**
+
+1. Vá para **Supabase Dashboard > Storage > New Bucket**
+2. Nome: `category-images`
+3. Public: ✅ Marcado
+4. File size limit: 5MB
+5. Allowed MIME types: `image/jpeg, image/png, image/gif, image/webp`
+
+#### **Opção B: Via SQL (Pode falhar por permissões)**
+
+Execute o arquivo `supabase-storage-categories-setup.sql`
+
+#### **Após criar o bucket, execute as políticas:**
+
+Execute o arquivo `supabase-storage-categories-setup-alternative.sql` para configurar as políticas de segurança.
+
+**📖 Guia completo**: Veja `SUPABASE_STORAGE_SETUP_GUIDE.md` para instruções detalhadas.
 
 ```sql
 -- Habilitar RLS
