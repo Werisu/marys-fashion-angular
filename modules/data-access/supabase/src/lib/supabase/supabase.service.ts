@@ -7,12 +7,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 interface SupabaseConfig {
   url: string;
   anonKey: string;
+  serviceRoleKey?: string;
 }
 
 // Configuração temporária - deve ser configurada externamente
 const DEFAULT_CONFIG: SupabaseConfig = {
   url: environment.supabase.url,
   anonKey: environment.supabase.anonKey,
+  serviceRoleKey: environment.supabase.serviceRoleKey,
 };
 
 /**
@@ -28,6 +30,7 @@ const DEFAULT_CONFIG: SupabaseConfig = {
 })
 export class SupabaseService {
   private supabase: SupabaseClient;
+  private supabaseAdmin: SupabaseClient | null = null;
   private currentUser = new BehaviorSubject<User | null>(null);
 
   constructor() {
@@ -54,6 +57,20 @@ export class SupabaseService {
 
     // Verificar usuário atual APÓS configurar o listener
     this.checkUser();
+
+    // Configurar cliente admin se service role key estiver disponível
+    if (DEFAULT_CONFIG.serviceRoleKey) {
+      this.supabaseAdmin = createClient(
+        config.url,
+        DEFAULT_CONFIG.serviceRoleKey,
+        {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          },
+        }
+      );
+    }
   }
 
   /**
@@ -61,6 +78,18 @@ export class SupabaseService {
    */
   getClient(): SupabaseClient {
     return this.supabase;
+  }
+
+  /**
+   * Obter cliente Supabase Admin (com service role)
+   */
+  getAdminClient(): SupabaseClient {
+    if (!this.supabaseAdmin) {
+      throw new Error(
+        'Service role key não configurada. Não é possível acessar a API de administração.'
+      );
+    }
+    return this.supabaseAdmin;
   }
 
   /**
