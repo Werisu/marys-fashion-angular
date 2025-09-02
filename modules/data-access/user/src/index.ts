@@ -1,1 +1,2 @@
-export * from './lib/user-data-access/user-data-access';
+export * from './lib/models/user.model';
+export * from './lib/user-supabase';
