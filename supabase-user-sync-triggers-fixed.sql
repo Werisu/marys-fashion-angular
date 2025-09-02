@@ -124,9 +124,11 @@ CREATE POLICY "Administradores podem inserir perfis" ON user_profiles
 INSERT WITH CHECK
     (
     EXISTS (
-    SELEC
- 1 FROM auth.us
-WHERE auth.users.id = auth.uid()
+SELEC
+1
+FROM auth.us
+WHERE auth.users.id = auth.uid
+()
     AND auth.users.raw_user_meta_data->>'role' = 'admin'
     )
 );
