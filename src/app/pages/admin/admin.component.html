@@ -2,14 +2,16 @@
   <!-- Header -->
   <div class="bg-gradient-to-r from-pink-600 to-purple-600 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-6">
+      <div
+        class="flex flex-col sm:flex-row justify-between items-center py-4 sm:py-6 space-y-4 sm:space-y-0"
+      >
         <!-- Logo e Título -->
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3 sm:space-x-4">
           <div
-            class="flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm"
+            class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl backdrop-blur-sm"
           >
             <svg
-              class="w-7 h-7 text-white"
+              class="w-5 h-5 sm:w-7 sm:h-7 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -22,18 +24,22 @@
               ></path>
             </svg>
           </div>
-          <div>
-            <h1 class="text-2xl font-bold text-white">Painel Administrativo</h1>
-            <p class="text-pink-100 text-sm">Mary's Fashion</p>
+          <div class="text-center sm:text-left">
+            <h1 class="text-xl sm:text-2xl font-bold text-white">
+              Painel Administrativo
+            </h1>
+            <p class="text-pink-100 text-xs sm:text-sm">Mary's Fashion</p>
           </div>
         </div>
 
         <!-- Ações e Usuário -->
-        <div class="flex items-center space-x-4">
+        <div
+          class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto"
+        >
           <!-- Botão Categorias -->
           <button
             (click)="goToCategories()"
-            class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center space-x-2 border border-white/20"
+            class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center justify-center space-x-2 border border-white/20 w-full sm:w-auto"
           >
             <svg
               class="w-4 h-4"
@@ -53,7 +59,7 @@
 
           <!-- Informações do Usuário -->
           <div
-            class="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20"
+            class="flex items-center justify-center sm:justify-start space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20 w-full sm:w-auto"
           >
             <div
               class="flex items-center justify-center w-8 h-8 bg-white/20 rounded-full"
@@ -72,7 +78,7 @@
                 ></path>
               </svg>
             </div>
-            <div class="text-white">
+            <div class="text-white text-center sm:text-left">
               <p class="text-sm font-medium">{{ currentUser?.email }}</p>
               <p class="text-xs text-pink-100">Administrador</p>
             </div>
@@ -81,7 +87,7 @@
           <!-- Botão Logout -->
           <button
             (click)="logout()"
-            class="bg-red-500/80 hover:bg-red-600/80 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center space-x-2 border border-red-400/20"
+            class="bg-red-500/80 hover:bg-red-600/80 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center justify-center space-x-2 border border-red-400/20 w-full sm:w-auto"
           >
             <svg
               class="w-4 h-4"
