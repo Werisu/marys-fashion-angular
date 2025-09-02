@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
 import {
-  Category,
   Product,
+  ProductCategory,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
 import { ProductCard } from '@marys-fashion-angular/product-ui';
@@ -11,12 +11,13 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'lib-home',
+  standalone: true,
   imports: [Header, Footer, ProductCard],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home {
-  categories: Category[] = [];
+export class Home implements OnInit {
+  categories: ProductCategory[] = [];
   featuredProducts: Product[] = [];
 
   private productService = inject(ProductSupabaseService);

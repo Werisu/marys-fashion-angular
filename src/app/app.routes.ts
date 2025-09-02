@@ -1,28 +1,11 @@
-import { Route } from '@angular/router';
+import { Routes } from '@angular/router';
 
-export const appRoutes: Route[] = [
+export const routes: Routes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'home',
-  },
-  {
-    path: 'home',
-    loadComponent: () =>
-      import('@marys-fashion-angular/home').then((m) => m.Home),
-  },
-  {
-    path: 'catalogo',
     loadComponent: () =>
       import('./pages/catalog/catalog.component').then(
         (m) => m.CatalogComponent
-      ),
-  },
-  {
-    path: 'produto/:id',
-    loadComponent: () =>
-      import('@marys-fashion-angular/product-detail').then(
-        (m) => m.ProductDetail
       ),
   },
   {
@@ -36,7 +19,17 @@ export const appRoutes: Route[] = [
       import('./pages/admin/admin.component').then((m) => m.AdminComponent),
   },
   {
-    path: '**',
-    redirectTo: '',
+    path: 'admin/categories',
+    loadComponent: () =>
+      import('./pages/admin/categories/categories.component').then(
+        (m) => m.CategoriesComponent
+      ),
+  },
+  {
+    path: 'product/:id',
+    loadComponent: () =>
+      import('@marys-fashion-angular/product-detail').then(
+        (m) => m.ProductDetail
+      ),
   },
 ];

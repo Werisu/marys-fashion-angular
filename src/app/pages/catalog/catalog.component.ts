@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Footer, Header } from '@marys-fashion-angular/layout';
 import {
-  Category,
   Product,
+  ProductCategory,
   ProductSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
 import { ProductSearchComponent } from '@marys-fashion-angular/product-search';
@@ -186,7 +186,7 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
 })
 export class CatalogComponent implements OnInit {
   products: Product[] = [];
-  categories: Category[] = [];
+  categories: ProductCategory[] = [];
   filteredProducts: Product[] = [];
 
   searchQuery = '';

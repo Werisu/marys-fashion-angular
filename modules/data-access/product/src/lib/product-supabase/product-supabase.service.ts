@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, catchError, from, map, of } from 'rxjs';
-import { Category, Product } from '../models/product.model';
+import { Product, ProductCategory } from '../models/product.model';
 
 // Interface para o cliente Supabase
 interface SupabaseClient {
@@ -143,7 +143,7 @@ export class ProductSupabaseService {
   /**
    * Obter todas as categorias
    */
-  getCategories(): Observable<Category[]> {
+  getCategories(): Observable<ProductCategory[]> {
     if (!this.checkService()) return of([]);
 
     return from(

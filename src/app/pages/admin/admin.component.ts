@@ -240,6 +240,10 @@ export class AdminComponent implements OnInit {
     this.uploadedImages = [];
   }
 
+  goToCategories() {
+    this.router.navigate(['/admin/categories']);
+  }
+
   async logout() {
     await this.supabaseService.signOut();
     this.router.navigate(['/login']);
