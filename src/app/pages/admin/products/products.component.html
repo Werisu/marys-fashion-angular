@@ -358,9 +358,34 @@
     <!-- Lista de Produtos -->
     <div class="bg-white rounded-lg shadow">
       <div class="px-6 py-4 border-b border-gray-200">
-        <h3 class="text-lg font-semibold text-gray-900">
-          Produtos Cadastrados
-        </h3>
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0"
+        >
+          <h3 class="text-lg font-semibold text-gray-900">
+            Produtos Cadastrados
+          </h3>
+
+          <!-- Ações em lote -->
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <label class="text-sm text-gray-600">Ajuste de preços:</label>
+              <input
+                type="number"
+                [(ngModel)]="bulkAdjustment"
+                placeholder="%"
+                step="0.1"
+                class="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <button
+                (click)="applyBulkAdjustment()"
+                [disabled]="!bulkAdjustment || products.length === 0"
+                class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                Aplicar
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="overflow-x-auto">
@@ -423,7 +448,87 @@
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                R$ {{ product.price.toFixed(2).replace('.', ',') }}
+                <div
+                  *ngIf="!editingPrice[product.id]"
+                  class="flex items-center space-x-2"
+                >
+                  <span
+                    >R$ {{ product.price.toFixed(2).replace('.', ',') }}</span
+                  >
+                  <button
+                    (click)="startPriceEdit(product.id, product.price)"
+                    class="text-blue-600 hover:text-blue-800 text-xs"
+                    title="Editar preço"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div
+                  *ngIf="editingPrice[product.id]"
+                  class="flex items-center space-x-2"
+                >
+                  <input
+                    type="number"
+                    [(ngModel)]="tempPrices[product.id]"
+                    (keydown)="onPriceKeyDown($event, product.id)"
+                    step="0.01"
+                    min="0"
+                    [attr.data-product-id]="product.id"
+                    class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    #priceInput
+                    (click)="$event.stopPropagation()"
+                  />
+                  <button
+                    (click)="savePriceEdit(product.id)"
+                    class="text-green-600 hover:text-green-800 text-xs"
+                    title="Salvar"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                  </button>
+                  <button
+                    (click)="cancelPriceEdit(product.id)"
+                    class="text-red-600 hover:text-red-800 text-xs"
+                    title="Cancelar"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span

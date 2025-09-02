@@ -31,6 +31,7 @@ export class ProductsComponent implements OnInit {
   uploadedImages: string[] = [];
   editingPrice: { [key: number]: boolean } = {};
   tempPrices: { [key: number]: number } = {};
+  bulkAdjustment: number | null = null;
 
   productForm = {
     name: '',
@@ -274,6 +275,127 @@ export class ProductsComponent implements OnInit {
     };
     this.selectedFiles = [];
     this.uploadedImages = [];
+  }
+
+  // Métodos para edição rápida de preços
+  startPriceEdit(productId: number, currentPrice: number): void {
+    this.editingPrice[productId] = true;
+    this.tempPrices[productId] = currentPrice;
+
+    // Focar no input após a próxima verificação de mudanças
+    setTimeout(() => {
+      const input = document.querySelector(
+        `input[data-product-id="${productId}"]`
+      ) as HTMLInputElement;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 0);
+  }
+
+  cancelPriceEdit(productId: number): void {
+    this.editingPrice[productId] = false;
+    delete this.tempPrices[productId];
+  }
+
+  savePriceEdit(productId: number): void {
+    const newPrice = this.tempPrices[productId];
+    if (newPrice === undefined || newPrice < 0) {
+      alert('Preço inválido');
+      return;
+    }
+
+    // Encontrar o produto
+    const product = this.products.find((p) => p.id === productId);
+    if (!product) return;
+
+    // Atualizar o preço
+    const productData = {
+      name: product.name,
+      description: product.description,
+      price: newPrice,
+      category: product.category,
+      images: product.images,
+      sizes: product.sizes,
+      colors: product.colors,
+      in_stock: product.in_stock,
+      featured: product.featured,
+    };
+
+    this.productService.updateProduct(productId, productData).subscribe({
+      next: (result) => {
+        if (result) {
+          // Atualizar o produto na lista local
+          const index = this.products.findIndex((p) => p.id === productId);
+          if (index !== -1) {
+            this.products[index].price = newPrice;
+          }
+          this.cancelPriceEdit(productId);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar preço:', error);
+        alert('Erro ao atualizar preço');
+      },
+    });
+  }
+
+  onPriceKeyDown(event: KeyboardEvent, productId: number): void {
+    if (event.key === 'Enter') {
+      this.savePriceEdit(productId);
+    } else if (event.key === 'Escape') {
+      this.cancelPriceEdit(productId);
+    }
+  }
+
+  applyBulkAdjustment(): void {
+    if (!this.bulkAdjustment || this.products.length === 0) return;
+
+    const adjustment = this.bulkAdjustment / 100; // Converter para decimal
+    const confirmMessage = `Deseja aplicar ${
+      this.bulkAdjustment > 0 ? 'aumento' : 'redução'
+    } de ${Math.abs(this.bulkAdjustment)}% em todos os produtos?`;
+
+    if (!confirm(confirmMessage)) return;
+
+    let updatedCount = 0;
+    const totalProducts = this.products.length;
+
+    this.products.forEach((product, index) => {
+      const newPrice = product.price * (1 + adjustment);
+
+      const productData = {
+        name: product.name,
+        description: product.description,
+        price: Math.round(newPrice * 100) / 100, // Arredondar para 2 casas decimais
+        category: product.category,
+        images: product.images,
+        sizes: product.sizes,
+        colors: product.colors,
+        in_stock: product.in_stock,
+        featured: product.featured,
+      };
+
+      this.productService.updateProduct(product.id, productData).subscribe({
+        next: (result) => {
+          if (result) {
+            this.products[index].price = productData.price;
+            updatedCount++;
+
+            if (updatedCount === totalProducts) {
+              alert(
+                `Preços atualizados com sucesso! ${updatedCount} produtos alterados.`
+              );
+              this.bulkAdjustment = null;
+            }
+          }
+        },
+        error: (error) => {
+          console.error(`Erro ao atualizar produto ${product.name}:`, error);
+        },
+      });
+    });
   }
 
   goBack(): void {
