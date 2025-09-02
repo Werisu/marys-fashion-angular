@@ -96,8 +96,8 @@ import { SupabaseService } from '@marys-fashion-angular/supabase';
                   </svg>
                 </div>
                 <div class="text-white text-center sm:text-left">
-                  <p class="text-sm font-medium">{{ userEmail }}</p>
-                  <p class="text-xs text-indigo-100">Administrador</p>
+                  <p class="text-sm font-medium">{{ userDisplayName }}</p>
+                  <p class="text-xs text-indigo-100">{{ userRole }}</p>
                 </div>
               </div>
 
@@ -482,6 +482,8 @@ export class UsersComponent implements OnInit {
   loading = false;
   saving = false;
   editingUser: User | null = null;
+  currentUser: any = null;
+  currentUserProfile: User | null = null;
 
   // Formulário
   userForm = {
@@ -507,14 +509,42 @@ export class UsersComponent implements OnInit {
     this.loadUsers();
   }
 
-  get userEmail(): string {
-    // Para simplificar, vamos usar um valor padrão
-    // Em uma implementação real, você poderia usar um BehaviorSubject local
-    return 'Administrador';
+  get userDisplayName(): string {
+    if (this.currentUserProfile?.full_name) {
+      return this.currentUserProfile.full_name;
+    }
+    if (this.currentUser?.email) {
+      return this.currentUser.email;
+    }
+    return 'Usuário';
+  }
+
+  get userRole(): string {
+    if (this.currentUserProfile?.role) {
+      switch (this.currentUserProfile.role) {
+        case 'admin':
+          return 'Administrador';
+        case 'moderator':
+          return 'Moderador';
+        case 'user':
+          return 'Usuário';
+        default:
+          return 'Usuário';
+      }
+    }
+    return 'Usuário';
   }
 
   loadCurrentUser(): void {
-    this.supabaseService.getCurrentUser().subscribe();
+    this.supabaseService.getCurrentUser().subscribe((user) => {
+      this.currentUser = user;
+      if (user?.id) {
+        // Buscar perfil completo do usuário
+        this.userService.getUserById(user.id).subscribe((userProfile) => {
+          this.currentUserProfile = userProfile;
+        });
+      }
+    });
   }
 
   loadUsers(): void {

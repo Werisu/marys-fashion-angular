@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import {
   Product,
   ProductSupabaseService,
+  User,
+  UserSupabaseService,
 } from '@marys-fashion-angular/product-data-access';
 import {
   FileUploadService,
@@ -21,6 +23,7 @@ import {
 export class AdminComponent implements OnInit {
   products: Product[] = [];
   currentUser: any = null;
+  currentUserProfile: User | null = null;
   saving = false;
   uploading = false;
   editingProduct: Product | null = null;
@@ -41,6 +44,7 @@ export class AdminComponent implements OnInit {
 
   private supabaseService = inject(SupabaseService);
   private productService = inject(ProductSupabaseService);
+  private userService = inject(UserSupabaseService);
   private fileUploadService = inject(FileUploadService);
   private router = inject(Router);
 
@@ -56,7 +60,39 @@ export class AdminComponent implements OnInit {
   loadCurrentUser() {
     this.supabaseService.getCurrentUser().subscribe((user) => {
       this.currentUser = user;
+      if (user?.id) {
+        // Buscar perfil completo do usuário
+        this.userService.getUserById(user.id).subscribe((userProfile) => {
+          this.currentUserProfile = userProfile;
+        });
+      }
     });
+  }
+
+  get userDisplayName(): string {
+    if (this.currentUserProfile?.full_name) {
+      return this.currentUserProfile.full_name;
+    }
+    if (this.currentUser?.email) {
+      return this.currentUser.email;
+    }
+    return 'Usuário';
+  }
+
+  get userRole(): string {
+    if (this.currentUserProfile?.role) {
+      switch (this.currentUserProfile.role) {
+        case 'admin':
+          return 'Administrador';
+        case 'moderator':
+          return 'Moderador';
+        case 'user':
+          return 'Usuário';
+        default:
+          return 'Usuário';
+      }
+    }
+    return 'Usuário';
   }
 
   loadProducts() {
