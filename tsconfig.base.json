@@ -27,7 +27,7 @@
       "@marys-fashion-angular/supabase": [
         "libs/modules/data-access/supabase/src/index.ts"
       ],
-      "environment": ["src/environments/environment.ts"]
+      "environment": ["apps/marys-fashion-angular/src/environments/environment.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
