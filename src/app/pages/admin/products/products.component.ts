@@ -1,0 +1,756 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import {
+  Product,
+  ProductSupabaseService,
+  User,
+  UserSupabaseService,
+} from '@marys-fashion-angular/product-data-access';
+import {
+  FileUploadService,
+  SupabaseService,
+} from '@marys-fashion-angular/supabase';
+
+@Component({
+  selector: 'app-products',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="min-h-screen bg-gray-50">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-pink-600 to-purple-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-center py-4 sm:py-6 space-y-4 sm:space-y-0"
+          >
+            <!-- Logo e Título -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+              <div
+                class="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl backdrop-blur-sm"
+              >
+                <svg
+                  class="w-5 h-5 sm:w-7 sm:h-7 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  ></path>
+                </svg>
+              </div>
+              <div class="text-center sm:text-left">
+                <h1 class="text-xl sm:text-2xl font-bold text-white">
+                  Gerenciar Produtos
+                </h1>
+                <p class="text-pink-100 text-xs sm:text-sm">Mary's Fashion</p>
+              </div>
+            </div>
+
+            <!-- Ações -->
+            <div
+              class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto"
+            >
+              <!-- Botão Voltar -->
+              <button
+                (click)="goBack()"
+                class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center justify-center space-x-2 border border-white/20 w-full sm:w-auto"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  ></path>
+                </svg>
+                <span>Voltar</span>
+              </button>
+
+              <!-- Informações do Usuário -->
+              <div
+                class="flex items-center justify-center sm:justify-start space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20 w-full sm:w-auto"
+              >
+                <div
+                  class="flex items-center justify-center w-8 h-8 bg-white/20 rounded-full"
+                >
+                  <svg
+                    class="w-4 h-4 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="text-white text-center sm:text-left">
+                  <p class="text-sm font-medium">{{ userDisplayName }}</p>
+                  <p class="text-xs text-pink-100">{{ userRole }}</p>
+                </div>
+              </div>
+
+              <!-- Botão Logout -->
+              <button
+                (click)="logout()"
+                class="bg-red-500/80 hover:bg-red-600/80 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center justify-center space-x-2 border border-red-400/20 w-full sm:w-auto"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  ></path>
+                </svg>
+                <span>Sair</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Adicionar Produto -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">
+            {{ editingProduct ? 'Editar Produto' : 'Adicionar Novo Produto' }}
+          </h2>
+
+          <form (ngSubmit)="saveProduct()" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="name"
+                  class="block text-sm font-medium text-gray-700"
+                  >Nome</label
+                >
+                <input
+                  type="text"
+                  [(ngModel)]="productForm.name"
+                  name="name"
+                  required
+                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="price"
+                  class="block text-sm font-medium text-gray-700"
+                  >Preço</label
+                >
+                <input
+                  type="number"
+                  [(ngModel)]="productForm.price"
+                  name="price"
+                  step="0.01"
+                  required
+                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="category"
+                  class="block text-sm font-medium text-gray-700"
+                  >Categoria</label
+                >
+                <select
+                  [(ngModel)]="productForm.category"
+                  name="category"
+                  required
+                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                >
+                  <option value="">Selecione uma categoria</option>
+                  <option value="vestidos">Vestidos</option>
+                  <option value="blazers">Blazers</option>
+                  <option value="calcas">Calças</option>
+                  <option value="blusas">Blusas</option>
+                  <option value="saias">Saias</option>
+                  <option value="esportivo">Esportivo</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  for="sizes"
+                  class="block text-sm font-medium text-gray-700"
+                  >Tamanhos (separados por vírgula)</label
+                >
+                <input
+                  type="text"
+                  [(ngModel)]="productForm.sizes"
+                  name="sizes"
+                  placeholder="P, M, G, GG"
+                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+
+              <div>
+                <label
+                  for="colors"
+                  class="block text-sm font-medium text-gray-700"
+                  >Cores (separadas por vírgula)</label
+                >
+                <input
+                  type="text"
+                  [(ngModel)]="productForm.colors"
+                  name="colors"
+                  placeholder="Azul, Rosa, Preto"
+                  class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+
+              <div class="md:col-span-2">
+                <label
+                  for="imageUpload"
+                  class="block text-sm font-medium text-gray-700 mb-2"
+                  >Upload de Imagens</label
+                >
+                <div class="space-y-4">
+                  <!-- Input de arquivo -->
+                  <div class="flex items-center space-x-4">
+                    <input
+                      type="file"
+                      id="imageUpload"
+                      multiple
+                      accept="image/*"
+                      (change)="onFileSelected($event)"
+                      class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+                    />
+                    <button
+                      type="button"
+                      (click)="uploadImages()"
+                      [disabled]="selectedFiles.length === 0 || uploading"
+                      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+                    >
+                      {{ uploading ? 'Enviando...' : 'Enviar Imagens' }}
+                    </button>
+                  </div>
+
+                  <!-- Preview das imagens selecionadas -->
+                  <div
+                    *ngIf="selectedFiles.length > 0"
+                    class="grid grid-cols-2 md:grid-cols-4 gap-4"
+                  >
+                    <div
+                      *ngFor="let file of selectedFiles; let i = index"
+                      class="relative"
+                    >
+                      <img
+                        [src]="getFilePreview(file)"
+                        [alt]="'Preview ' + (i + 1)"
+                        class="w-full h-24 object-cover rounded-lg border border-gray-300"
+                      />
+                      <button
+                        type="button"
+                        (click)="removeSelectedFile(i)"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Imagens já enviadas -->
+                  <div *ngIf="uploadedImages.length > 0" class="space-y-2">
+                    <div class="block text-sm font-medium text-gray-700">
+                      Imagens Enviadas:
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div
+                        *ngFor="let image of uploadedImages; let i = index"
+                        class="relative"
+                      >
+                        <img
+                          [src]="image"
+                          [alt]="'Imagem ' + (i + 1)"
+                          class="w-full h-24 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          type="button"
+                          (click)="removeUploadedImage(i)"
+                          class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Campo de texto para URLs (fallback) -->
+                  <div class="mt-4">
+                    <label
+                      for="manualImages"
+                      class="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Ou adicione URLs de imagens (separadas por vírgula)
+                    </label>
+                    <input
+                      type="text"
+                      id="manualImages"
+                      [(ngModel)]="productForm.images"
+                      name="images"
+                      placeholder="https://exemplo.com/imagem1.jpg, https://exemplo.com/imagem2.jpg"
+                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label
+                for="description"
+                class="block text-sm font-medium text-gray-700"
+                >Descrição</label
+              >
+              <textarea
+                [(ngModel)]="productForm.description"
+                name="description"
+                rows="3"
+                required
+                class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-pink-500 focus:border-pink-500"
+              ></textarea>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="productForm.featured"
+                  name="featured"
+                  class="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                />
+                <span class="ml-2 text-sm text-gray-700"
+                  >Produto em destaque</span
+                >
+              </label>
+
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="productForm.in_stock"
+                  name="in_stock"
+                  class="rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                />
+                <span class="ml-2 text-sm text-gray-700">Em estoque</span>
+              </label>
+            </div>
+
+            <div class="flex space-x-4">
+              <button
+                type="submit"
+                [disabled]="saving"
+                class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg font-medium disabled:opacity-50"
+              >
+                {{
+                  saving
+                    ? 'Salvando...'
+                    : editingProduct
+                    ? 'Atualizar'
+                    : 'Adicionar'
+                }}
+              </button>
+
+              <button
+                type="button"
+                (click)="cancelEdit()"
+                *ngIf="editingProduct"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-lg font-medium"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista de Produtos -->
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+              Produtos Cadastrados
+            </h3>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Produto
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Categoria
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Preço
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let product of products">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="h-10 w-10 flex-shrink-0">
+                        <img
+                          [src]="product.images[0]"
+                          [alt]="product.name"
+                          class="h-10 w-10 rounded-full object-cover"
+                        />
+                      </div>
+                      <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">
+                          {{ product.name }}
+                        </div>
+                        <div class="text-sm text-gray-500">
+                          {{ product.description.substring(0, 50) }}...
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800"
+                    >
+                      {{ product.category }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    R$ {{ product.price.toFixed(2).replace('.', ',') }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      [class]="
+                        product.in_stock
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      "
+                      class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    >
+                      {{ product.in_stock ? 'Em estoque' : 'Esgotado' }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      (click)="editProduct(product)"
+                      class="text-pink-600 hover:text-pink-900 mr-4"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      (click)="deleteProduct(product.id)"
+                      class="text-red-600 hover:text-red-900"
+                    >
+                      Excluir
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [],
+})
+export class ProductsComponent implements OnInit {
+  products: Product[] = [];
+  currentUser: any = null;
+  currentUserProfile: User | null = null;
+  saving = false;
+  uploading = false;
+  editingProduct: Product | null = null;
+  selectedFiles: File[] = [];
+  uploadedImages: string[] = [];
+
+  productForm = {
+    name: '',
+    description: '',
+    price: 0,
+    category: '',
+    images: '',
+    sizes: '',
+    colors: '',
+    in_stock: true,
+    featured: false,
+  };
+
+  private supabaseService = inject(SupabaseService);
+  private productService = inject(ProductSupabaseService);
+  private userService = inject(UserSupabaseService);
+  private fileUploadService = inject(FileUploadService);
+  private router = inject(Router);
+
+  ngOnInit() {
+    // Configurar o serviço antes de usar
+    this.productService.setSupabaseService(this.supabaseService);
+
+    // Carregar usuário atual para exibir informações
+    this.loadCurrentUser();
+    this.loadProducts();
+  }
+
+  loadCurrentUser() {
+    this.supabaseService.getCurrentUser().subscribe((user) => {
+      this.currentUser = user;
+      if (user?.id) {
+        // Buscar perfil completo do usuário
+        this.userService.getUserById(user.id).subscribe((userProfile) => {
+          this.currentUserProfile = userProfile;
+        });
+      }
+    });
+  }
+
+  get userDisplayName(): string {
+    if (this.currentUserProfile?.full_name) {
+      return this.currentUserProfile.full_name;
+    }
+    if (this.currentUser?.email) {
+      return this.currentUser.email;
+    }
+    return 'Usuário';
+  }
+
+  get userRole(): string {
+    if (this.currentUserProfile?.role) {
+      switch (this.currentUserProfile.role) {
+        case 'admin':
+          return 'Administrador';
+        case 'moderator':
+          return 'Moderador';
+        case 'user':
+          return 'Usuário';
+        default:
+          return 'Usuário';
+      }
+    }
+    return 'Usuário';
+  }
+
+  loadProducts() {
+    this.productService.getProducts().subscribe((products) => {
+      this.products = products;
+    });
+  }
+
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (files) {
+      this.selectedFiles = [
+        ...this.selectedFiles,
+        ...(Array.from(files) as File[]),
+      ];
+    }
+  }
+
+  removeSelectedFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
+
+  removeUploadedImage(index: number) {
+    this.uploadedImages.splice(index, 1);
+  }
+
+  getFilePreview(file: File): string {
+    return URL.createObjectURL(file);
+  }
+
+  async uploadImages() {
+    if (this.selectedFiles.length === 0) return;
+
+    this.uploading = true;
+
+    try {
+      const results = await this.fileUploadService
+        .uploadMultipleImages(this.selectedFiles)
+        .toPromise();
+
+      if (results) {
+        const successfulUploads = results.filter((result) => result.success);
+        const newImageUrls = successfulUploads.map((result) => result.url!);
+
+        this.uploadedImages = [...this.uploadedImages, ...newImageUrls];
+        this.selectedFiles = [];
+
+        // Atualizar o campo de imagens com as URLs
+        const allImages = [...this.uploadedImages];
+        if (this.productForm.images) {
+          const existingUrls = this.productForm.images
+            .split(',')
+            .map((url) => url.trim())
+            .filter((url) => url);
+          allImages.push(...existingUrls);
+        }
+        this.productForm.images = allImages.join(', ');
+
+        console.log('Imagens enviadas com sucesso:', newImageUrls);
+      }
+    } catch (error) {
+      console.error('Erro ao enviar imagens:', error);
+      alert(
+        'Erro ao enviar algumas imagens. Verifique o console para mais detalhes.'
+      );
+    } finally {
+      this.uploading = false;
+    }
+  }
+
+  saveProduct() {
+    if (
+      !this.productForm.name ||
+      !this.productForm.description ||
+      !this.productForm.category
+    ) {
+      alert('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    this.saving = true;
+
+    // Combinar imagens enviadas com URLs manuais
+    let allImages = [...this.uploadedImages];
+    if (this.productForm.images) {
+      const manualUrls = this.productForm.images
+        .split(',')
+        .map((url) => url.trim())
+        .filter((url) => url);
+      allImages = [...allImages, ...manualUrls];
+    }
+
+    const productData = {
+      name: this.productForm.name,
+      description: this.productForm.description,
+      price: this.productForm.price,
+      category: this.productForm.category,
+      images: allImages,
+      sizes: this.productForm.sizes
+        .split(',')
+        .map((size) => size.trim())
+        .filter((size) => size),
+      colors: this.productForm.colors
+        .split(',')
+        .map((color) => color.trim())
+        .filter((color) => color),
+      in_stock: this.productForm.in_stock,
+      featured: this.productForm.featured,
+    };
+
+    if (this.editingProduct) {
+      // Atualizar produto existente
+      this.productService
+        .updateProduct(this.editingProduct.id, productData)
+        .subscribe((result) => {
+          if (result) {
+            this.loadProducts();
+            this.resetForm();
+            this.editingProduct = null;
+          }
+          this.saving = false;
+        });
+    } else {
+      // Criar novo produto
+      this.productService.createProduct(productData).subscribe((result) => {
+        if (result) {
+          this.loadProducts();
+          this.resetForm();
+        }
+        this.saving = false;
+      });
+    }
+  }
+
+  editProduct(product: Product) {
+    this.editingProduct = product;
+    this.uploadedImages = [...product.images];
+    this.productForm = {
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      category: product.category,
+      images: '', // Será preenchido com as imagens já enviadas
+      sizes: product.sizes.join(', '),
+      colors: product.colors.join(', '),
+      in_stock: product.in_stock,
+      featured: product.featured || false,
+    };
+  }
+
+  cancelEdit() {
+    this.editingProduct = null;
+    this.resetForm();
+  }
+
+  deleteProduct(id: number) {
+    if (confirm('Tem certeza que deseja excluir este produto?')) {
+      this.productService.deleteProduct(id).subscribe((success) => {
+        if (success) {
+          this.loadProducts();
+        }
+      });
+    }
+  }
+
+  resetForm() {
+    this.productForm = {
+      name: '',
+      description: '',
+      price: 0,
+      category: '',
+      images: '',
+      sizes: '',
+      colors: '',
+      in_stock: true,
+      featured: false,
+    };
+    this.selectedFiles = [];
+    this.uploadedImages = [];
+  }
+
+  goBack(): void {
+    this.router.navigate(['/admin']);
+  }
+
+  async logout() {
+    await this.supabaseService.signOut();
+    this.router.navigate(['/login']);
+  }
+}

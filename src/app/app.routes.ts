@@ -13,7 +13,7 @@ export const appRoutes: Route[] = [
       import('@marys-fashion-angular/home').then((m) => m.Home),
   },
   {
-    path: 'catalogo',
+    path: 'catalog',
     loadComponent: () =>
       import('./pages/catalog/catalog.component').then(
         (m) => m.CatalogComponent
@@ -35,6 +35,14 @@ export const appRoutes: Route[] = [
     path: 'admin',
     loadComponent: () =>
       import('./pages/admin/admin.component').then((m) => m.AdminComponent),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'admin/products',
+    loadComponent: () =>
+      import('./pages/admin/products/products.component').then(
+        (m) => m.ProductsComponent
+      ),
     canActivate: [authGuard],
   },
   {
