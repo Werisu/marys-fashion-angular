@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService } from '@marys-fashion-angular/supabase';
 import {
   CreateUserRequest,
   UpdateUserRequest,
   User,
-} from '../../../../../modules/data-access/product/src/lib/models/user.model';
-import { UserSupabaseService } from '../../../../../modules/data-access/product/src/lib/user-supabase/user-supabase.service';
+  UserSupabaseService,
+} from '@marys-fashion-angular/product-data-access';
+import { SupabaseService } from '@marys-fashion-angular/supabase';
 
 @Component({
   selector: 'app-users',
