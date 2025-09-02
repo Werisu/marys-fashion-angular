@@ -23,6 +23,9 @@
       "@marys-fashion-angular/supabase": [
         "modules/data-access/supabase/src/index.ts"
       ],
+      "@marys-fashion-angular/user-data-access": [
+        "modules/data-access/user/src/index.ts"
+      ],
       "environment": ["src/environments/environment.ts"]
     }
   },
