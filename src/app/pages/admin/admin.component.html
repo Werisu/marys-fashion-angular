@@ -1,24 +1,102 @@
 <div class="min-h-screen bg-gray-50">
   <!-- Header -->
-  <div class="bg-white shadow">
+  <div class="bg-gradient-to-r from-pink-600 to-purple-600 shadow-lg">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center py-6">
-        <h1 class="text-2xl font-bold text-gray-900">Painel Administrativo</h1>
+        <!-- Logo e Título -->
         <div class="flex items-center space-x-4">
+          <div
+            class="flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl backdrop-blur-sm"
+          >
+            <svg
+              class="w-7 h-7 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              ></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-white">Painel Administrativo</h1>
+            <p class="text-pink-100 text-sm">Mary's Fashion</p>
+          </div>
+        </div>
+
+        <!-- Ações e Usuário -->
+        <div class="flex items-center space-x-4">
+          <!-- Botão Categorias -->
           <button
             (click)="goToCategories()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center space-x-2 border border-white/20"
           >
-            Gerenciar Categorias
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              ></path>
+            </svg>
+            <span>Categorias</span>
           </button>
-          <span class="text-sm text-gray-600">
-            Olá, {{ currentUser?.email }}
-          </span>
+
+          <!-- Informações do Usuário -->
+          <div
+            class="flex items-center space-x-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/20"
+          >
+            <div
+              class="flex items-center justify-center w-8 h-8 bg-white/20 rounded-full"
+            >
+              <svg
+                class="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+            </div>
+            <div class="text-white">
+              <p class="text-sm font-medium">{{ currentUser?.email }}</p>
+              <p class="text-xs text-pink-100">Administrador</p>
+            </div>
+          </div>
+
+          <!-- Botão Logout -->
           <button
             (click)="logout()"
-            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            class="bg-red-500/80 hover:bg-red-600/80 text-white px-4 py-2 rounded-xl text-sm font-medium backdrop-blur-sm transition-all duration-200 flex items-center space-x-2 border border-red-400/20"
           >
-            Sair
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              ></path>
+            </svg>
+            <span>Sair</span>
           </button>
         </div>
       </div>
