@@ -38,15 +38,22 @@ export class SupabaseService {
     };
 
     // Criar cliente Supabase
-    this.supabase = createClient(config.url, config.anonKey);
+    this.supabase = createClient(config.url, config.anonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    });
 
-    // Verificar usuário atual
-    this.checkUser();
-
-    // Escutar mudanças de autenticação
+    // Escutar mudanças de autenticação ANTES de verificar o usuário
     this.supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
       this.currentUser.next(session?.user ?? null);
     });
+
+    // Verificar usuário atual APÓS configurar o listener
+    this.checkUser();
   }
 
   /**
@@ -61,10 +68,30 @@ export class SupabaseService {
    */
   private async checkUser(): Promise<void> {
     try {
+      console.log('Verificando usuário atual...');
+
+      // Primeiro verificar se há uma sessão ativa
       const {
-        data: { user },
-      } = await this.supabase.auth.getUser();
-      this.currentUser.next(user);
+        data: { session },
+      } = await this.supabase.auth.getSession();
+
+      if (session?.user) {
+        console.log('Sessão encontrada para usuário:', session.user.email);
+        this.currentUser.next(session.user);
+      } else {
+        // Se não há sessão, verificar se há usuário
+        const {
+          data: { user },
+        } = await this.supabase.auth.getUser();
+
+        if (user) {
+          console.log('Usuário encontrado:', user.email);
+          this.currentUser.next(user);
+        } else {
+          console.log('Nenhum usuário autenticado');
+          this.currentUser.next(null);
+        }
+      }
     } catch (error) {
       console.error('Erro ao verificar usuário:', error);
       this.currentUser.next(null);
@@ -76,6 +103,13 @@ export class SupabaseService {
    */
   getCurrentUser(): Observable<User | null> {
     return this.currentUser.asObservable();
+  }
+
+  /**
+   * Verificar se o usuário está autenticado
+   */
+  isAuthenticated(): boolean {
+    return this.currentUser.value !== null;
   }
 
   /**
@@ -142,12 +176,5 @@ export class SupabaseService {
     } catch (error) {
       return { error };
     }
-  }
-
-  /**
-   * Verificar se usuário está autenticado
-   */
-  isAuthenticated(): boolean {
-    return this.currentUser.value !== null;
   }
 }
