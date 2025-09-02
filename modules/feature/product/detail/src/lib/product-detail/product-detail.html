@@ -30,7 +30,7 @@
           <img
             [src]="selectedImage"
             [alt]="product.name"
-            class="w-full h-96 object-cover"
+            class="w-full h-[500px] object-cover"
           />
         </div>
 
@@ -46,7 +46,7 @@
             <img
               [src]="image"
               [alt]="product.name"
-              class="w-full h-20 object-cover"
+              class="w-full h-24 object-cover"
             />
           </div>
           }
@@ -205,7 +205,7 @@
           class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
           [routerLink]="['/produto', relatedProduct.id]"
         >
-          <div class="h-48 bg-gray-200 overflow-hidden">
+          <div class="h-64 bg-gray-200 overflow-hidden">
             <img
               [src]="relatedProduct.images[0]"
               [alt]="relatedProduct.name"
