@@ -48,16 +48,14 @@ export class AdminComponent implements OnInit {
     // Configurar o serviço antes de usar
     this.productService.setSupabaseService(this.supabaseService);
 
-    this.checkAuth();
+    // Carregar usuário atual para exibir informações
+    this.loadCurrentUser();
     this.loadProducts();
   }
 
-  async checkAuth() {
+  loadCurrentUser() {
     this.supabaseService.getCurrentUser().subscribe((user) => {
       this.currentUser = user;
-      if (!user) {
-        this.router.navigate(['/login']);
-      }
     });
   }
 

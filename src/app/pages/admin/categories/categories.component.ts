@@ -310,16 +310,14 @@ export class CategoriesComponent implements OnInit {
     // Configurar o serviço antes de usar
     this.categoryService.setSupabaseService(this.supabaseService);
 
-    this.checkAuth();
+    // Carregar usuário atual para exibir informações
+    this.loadCurrentUser();
     this.loadCategories();
   }
 
-  async checkAuth() {
+  loadCurrentUser() {
     this.supabaseService.getCurrentUser().subscribe((user: unknown) => {
       this.currentUser = user;
-      if (!user) {
-        this.router.navigate(['/login']);
-      }
     });
   }
 
