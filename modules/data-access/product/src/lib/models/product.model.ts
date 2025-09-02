@@ -13,7 +13,7 @@ export interface Product {
   updated_at?: string;
 }
 
-export interface Category {
+export interface ProductCategory {
   id: string | number;
   name: string;
   description: string;

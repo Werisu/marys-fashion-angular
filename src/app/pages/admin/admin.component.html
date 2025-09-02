@@ -5,6 +5,12 @@
       <div class="flex justify-between items-center py-6">
         <h1 class="text-2xl font-bold text-gray-900">Painel Administrativo</h1>
         <div class="flex items-center space-x-4">
+          <button
+            (click)="goToCategories()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+          >
+            Gerenciar Categorias
+          </button>
           <span class="text-sm text-gray-600">
             Olá, {{ currentUser?.email }}
           </span>

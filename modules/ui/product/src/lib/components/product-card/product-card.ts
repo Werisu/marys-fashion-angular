@@ -1,10 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Product } from '@marys-fashion-angular/product-data-access';
 
 @Component({
   selector: 'lib-product-card',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './product-card.html',
   styleUrl: './product-card.scss',
 })

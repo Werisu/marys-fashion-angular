@@ -82,7 +82,8 @@
     </div>
 
     <!-- Mobile menu -->
-    <div *ngIf="mobileMenuOpen" class="md:hidden">
+    @if (mobileMenuOpen) {
+    <div class="md:hidden">
       <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
         <a
           routerLink="/"
@@ -100,5 +101,6 @@
         </a>
       </div>
     </div>
+    }
   </div>
 </header>

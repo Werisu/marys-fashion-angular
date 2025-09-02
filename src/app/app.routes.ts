@@ -36,6 +36,13 @@ export const appRoutes: Route[] = [
       import('./pages/admin/admin.component').then((m) => m.AdminComponent),
   },
   {
+    path: 'admin/categories',
+    loadComponent: () =>
+      import('./pages/admin/categories/categories.component').then(
+        (m) => m.CategoriesComponent
+      ),
+  },
+  {
     path: '**',
     redirectTo: '',
   },
