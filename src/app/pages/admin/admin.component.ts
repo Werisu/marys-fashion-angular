@@ -242,6 +242,10 @@ export class AdminComponent implements OnInit {
     this.router.navigate(['/admin/categories']);
   }
 
+  goToUsers() {
+    this.router.navigate(['/admin/users']);
+  }
+
   async logout() {
     await this.supabaseService.signOut();
     this.router.navigate(['/login']);
